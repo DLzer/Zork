@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ZORK</title>
+
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/items.js"></script>
+    <script src="assets/js/rooms.js"></script>
+    <script src="assets/js/game.js"></script>
+    <div id="crt-screen" class="crt">
+        <div class="container">
+            <div class="scorebar">
+                    <div id="scorebar-inner">
+                    <div class="room">West of House</div>
+                    <div class="moves">Moves: <span id='move-int'>0</span></div>
+                    <div class="score">Score: <span id='score-int'>0</span></div>
+                    <div id="crt-toggle"><span id="led">&#9679</span> <span id="crt-text"></span></div>
+                </div>
+            </div>
+
+            <div class="screen">
+                <div id="screen-inner">
+                    <div id="content" class="content">
+                        <div id="content-inner">
+                            <strong>ZORK</strong><br /><br />
+                            Welcome to ZORK.<br />
+                            (Test implementation by Dillon Lomnitzer. A Reiteration of Josh Stevens.)<br />
+                            Original game &copy; 1981, 1982, 1983 Infocom Inc. All rights reserved.<br /><br />
+
+                            <strong>West of House</strong><br />
+                            This is an open field west of a white house, with a boarded front door.<br />
+                            A rubber mat saying 'Welcome to Zork!' lies by the door.<br />
+                            There is a small mailbox here.<br /><br />
+                            <div class="commandline">
+                                > <input type="text" autofocus/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -69,7 +69,7 @@ $(document).ready(function() {
 	var restGameEntered = 0;
 	function reset() {
 		restGameEntered++;
-		if(localStorage.getItem('zorkSaveGame') || restGameEntered != 2) {
+		if(restGameEntered != 2) {
 			output.before("Get lost? If you'd like to start over, type reset once more.<br /><br />");
 		} else if( restGameEntered == 2 ) {
 			output.before("Your game has been reset.<br /><br />");

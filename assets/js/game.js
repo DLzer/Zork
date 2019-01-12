@@ -84,13 +84,13 @@ $(document).ready(function() {
 			}
 		} else {
 
-			if(!player.inventory.includes(item) || item == undefined) {
-				output.before("You don't have a "+item+" in your bag!<br /><br />");
+			let itemObj = stringVar(item);
+
+			if(!player.inventory.includes(itemObj) || itemObj == undefined) {
+				output.before("You don't have a "+itemObj.name+" in your bag!<br /><br />");
 			} else {
-				var tmpItem = stringVar(item);
-				console.log(tmpItem);
-				if(tmpItem.readable) {
-					output.before(tmpItem.contents+"<br /><br />");
+				if(itemObj.readable) {
+					output.before(itemObj.contents+"<br /><br />");
 				}
 			}
 		}
@@ -108,10 +108,12 @@ $(document).ready(function() {
 			else {
 				take(item[1]);
 			}
-		}
+		} 
 		else {
+
+			let itemObj = stringVar(item);
 			
-			if (!itemArray.includes(item) || !player.location.items.includes(stringVar(item))) {
+			if (itemObj === null || !itemArray.includes(item) || !player.location.items.includes(itemObj)) {
 				switch(Math.floor(Math.random() * 4) + 1) {
 					case 1:
 						output.before("You can't see any "+item+" here!<br /><br />");
@@ -130,17 +132,17 @@ $(document).ready(function() {
 				}
 			}
 
-			else if(player.inventory.includes(item)) {
-				output.before("You already have the "+item+" in your bag!<br /><br />");
+			else if(player.inventory.includes(itemObj)) {
+				output.before("You already have the "+itemObj.name+" in your bag!<br /><br />");
 			}
 	
 			else {
 
-				player.inventory.push(item);
+				player.inventory.push(itemObj);
 	
 				if (!verbose){
 					if (room.visited) {
-						output.before("<strong>You put the " + item + " in your bag.</strong><br /><br />");
+						output.before("<strong>You put the " + itemObj.name + " in your bag.</strong><br /><br />");
 						item.taken = true;
 					}
 					else {
@@ -216,8 +218,9 @@ $(document).ready(function() {
 			output.before("There is nothing in your bag!.<br /><br />");
 		} else {
 			output.before("Your bag contains:<br />");
+			console.log(player.inventory);
 			for(j=0;j<player.inventory.length;j++) {
-				output.before(player.inventory[j]+'<br />');
+				output.before(player.inventory[j].name+'<br />');
 			}
 		}
 	
@@ -226,7 +229,22 @@ $(document).ready(function() {
 
     // Define Invalid Command text    
     function invalidCommand(cmd) {
-		output.before("I don't know the word \""+cmd+"\".<br />");
+		switch(Math.floor(Math.random() * 4) + 1) {
+			case 1:
+				output.before("I don't know the word \""+cmd+"\".<br />");
+				break;
+			case 2:
+				output.before("We're not going down that road again!<br /><br />");
+				break;
+			case 3:
+				output.before("What a concept!<br /><br />");
+				break;
+			case 3:
+				output.before("Sorry, my memory is poor. Please give a direction.<br /><br />");
+				break;
+			default:
+				output.before("I'm not sure i get it!.<br /><br />");
+		}
 		scrollDown();
 	}
 
@@ -260,6 +278,7 @@ $(document).ready(function() {
 		switch(command[0]) {
 
 			case "bag":
+			case "inventory":
 				bag();
 				break;
 
@@ -313,6 +332,10 @@ $(document).ready(function() {
 				go("enter");
 				break;
 
+			case "exit":
+				go("exit");
+				break;
+
 			case "climb":
 				go("climb");
 				break;
@@ -352,7 +375,7 @@ $(document).ready(function() {
 			submitCommand();
 			scrollDown();
 		}
-    })
+    });
 
     function submitCommand() {
 
@@ -367,8 +390,13 @@ $(document).ready(function() {
 	}
 
 	function stringVar(string) {
-		var tmp = eval(string);
-		return tmp;
+		if(!eval(string) || eval(string) === null) {
+			invalidCommand(string);
+			return;
+		} else {
+			var tmp = eval(string);
+			return tmp;
+		}
 	}
     
     // CRT Toggle
@@ -376,6 +404,11 @@ $(document).ready(function() {
         $('#crt-screen').toggleClass("crt");
         $('#led').toggleClass("red");
         $('#crt-text').toggleClass("crt-text-off");
-    });
+	});
+	
+	// Focus Click
+	$('#content').click(function(){
+		$('#user_in').focus();
+	});
     
 });

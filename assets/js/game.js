@@ -7,6 +7,48 @@ $(document).ready(function() {
 		verbose = false,
 		roomView = $('.room');
 
+	// Loading game checking for previous save	
+	if(localStorage.getItem('zorkSaveGame')) {
+		// Get Saved Game
+		var savedGame = JSON.parse(localStorage.getItem('zorkSaveGame'));
+		// Create our blank player object
+		player = {
+			inventory:[],
+			location: null,
+			stringLocation: ""
+		};
+		// Fill our players inventory
+		for(sv = 0; sv < savedGame.inventory.length; sv++) {
+			player.inventory.push(stringVar(savedGame.inventory[sv].var_string));
+		}
+		// Set our players location
+		player.location = stringVar(savedGame.stringLocation);
+
+		// Set our moves variable
+		moves = savedGame.moves;
+		$('.moves').html("Moves: <span id='move-int'>" + savedGame.moves + "</span>");
+
+		//Set our room view
+		roomView.text(player.location.name);
+
+		// View our room
+		room = player.location;
+		look();
+		room.visited = true;
+	} else {
+		player = {
+			inventory: [],
+			location: westOfHouse,
+			stringLocation: 'westOfHouse'
+		};
+		room = player.location;
+		look();
+		room.visited = true;
+	}
+
+
+	// console.log(typeof(player.location));
+	// console.log(player.inventory);
     /**
      * 
      * Player is an object defines the initial inventory and location of player.
@@ -15,13 +57,8 @@ $(document).ready(function() {
      * @param {string} location 
      */
 
-    var player = {
-		inventory: [],
-		location: westOfHouse
-	};
 
 	var room = player.location;
-	console.log(room);
 
     /**
      * 
@@ -29,8 +66,44 @@ $(document).ready(function() {
      * 
      */
 
+	var restGameEntered = 0;
+	function reset() {
+		restGameEntered++;
+		if(localStorage.getItem('zorkSaveGame') && restGameEntered != 2) {
+			output.before("Get lost? If you'd like to start over, type reset once more.<br /><br />");
+		} else if( restGameEntered == 2 ) {
+			output.before("Your game has been reset.<br /><br />");
+			localStorage.clear();
+			window.location.reload();
+		} else {
+			output.before("Issue resetting game. Good Luck.<br /><br />");
+		}
+	}
+
+	var saveHasBeenEntered = 0;
+	function save(player) {
+		saveHasBeenEntered++;
+		if(localStorage.getItem('zorkSaveGame') && saveHasBeenEntered != 2) {
+			output.before("You have an existing save! If you'd like to overwrite it, type save again.<br /><br />");
+		} else if(!localStorage.getItem('zorkSaveGame') || saveHasBeenEntered == 2) {
+			var savePlayer = {};
+
+			savePlayer.inventory = player.inventory;
+			savePlayer.stringLocation = player.location.var_name;
+			savePlayer.moves = moves;
+			console.log(savePlayer);
+			localStorage.setItem('zorkSaveGame', JSON.stringify(savePlayer));
+
+			output.before("Your game has been saved.<br /><br />");
+
+			saveHasBeenEntered = 0;
+		} else {
+			output.before("Issue saving game. Good Luck.<br /><br />");
+		}
+	}
+
 	 // Shows item list in current room
-	 function showItems() {
+	function showItems() {
 		var itemlist = [];
 	
 		for (var i = 0; i < room.items.length; i++) {
@@ -187,6 +260,7 @@ $(document).ready(function() {
 	
 			else {
 				player.location = room[direction];
+				player.stringLocation = player.location.var_name;
 				room = player.location;
 				roomView.text(player.location.name);
 	
@@ -355,6 +429,17 @@ $(document).ready(function() {
                 
             case "help":
                 help();
+				break;
+			case "move":
+                go("move");
+				break;
+				
+			case "save":
+                save(player);
+				break;
+				
+			case "reset":
+                reset();
                 break;
 
 			default:

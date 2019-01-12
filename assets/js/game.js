@@ -69,7 +69,7 @@ $(document).ready(function() {
 	var restGameEntered = 0;
 	function reset() {
 		restGameEntered++;
-		if(localStorage.getItem('zorkSaveGame') && restGameEntered != 2) {
+		if(localStorage.getItem('zorkSaveGame') || restGameEntered != 2) {
 			output.before("Get lost? If you'd like to start over, type reset once more.<br /><br />");
 		} else if( restGameEntered == 2 ) {
 			output.before("Your game has been reset.<br /><br />");
@@ -331,7 +331,7 @@ $(document).ready(function() {
     
     function help() {
         output.before("Here is a list of acceptable commands:<br />");
-        var acceptedCommands = ['> go [direction]', '> north', '> east', '> south', '> west', '> up', '> down', '> look', '> open', '> enter', '> brief [ short descriptions ]', '> verbose [ long descriptions ]', '> help', '> take', '> bag'];
+        var acceptedCommands = ['> go [direction]', '> north', '> east', '> south', '> west', '> up', '> down', '> look', '> open', '> enter', '> exit','> climb', '> brief [ short descriptions ]', '> verbose [ long descriptions ]', '> help', '> take', '> bag', '> save [ Save current game]', '> reset [ Reset game including save ]'];
         for(i = 0; i < acceptedCommands.length; i++) {
             output.before(acceptedCommands[i]+'<br />');
         }

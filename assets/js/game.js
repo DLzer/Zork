@@ -233,6 +233,66 @@ $(document).ready(function() {
 	
 		scrollDown();
 	}
+
+	function use(item) {
+
+		if (Array.isArray(item)){
+	
+			// If the array has length of 1, the player didn't specify an item
+			if (item.length == 1) {
+				output.before("Use what?<br /><br />");
+			}
+			else {
+				use(item[1]);
+			}
+		} else {
+
+		let itemObj = stringVar(item);
+
+		console.log('Using item', item);
+			
+		if (itemObj === null || !itemArray.includes(item) || !player.inventory.includes(itemObj)) {
+			switch(Math.floor(Math.random() * 4) + 1) {
+				case 1:
+					output.before("You can't use the "+item+" here!<br /><br />");
+					break;
+				case 2:
+					output.before("Valient Attempt.<br /><br />");
+					break;
+				case 3:
+					output.before("What a concept!<br /><br />");
+					break;
+				case 3:
+					output.before("I don't know the word "+item+".<br /><br />");
+					break;
+				default:
+					output.before("I'm not sure i get it!.<br /><br />");
+			}
+		}
+
+		else {
+
+			if (!verbose){
+				if (room.visited) {
+					output.before("<strong>" + itemObj.useDesc + ".</strong><br /><br />");
+					itemObj.itemInUse = true;
+				}
+				else {
+					output.before("<strong>"+ itemObj.useDesc +"</strong><br /><br />");
+					itemObj.itemInUse = true;
+				}
+			}
+
+			else {
+				look();
+				itemObj.itemInUse = true;
+			}
+		}
+
+	}
+	
+
+	}
 	
 	
 	// If player typed "go -direction-", this function receives an array
@@ -253,7 +313,7 @@ $(document).ready(function() {
 		}
 	
 		else {
-	
+
 			if (room[direction] === undefined) {
 				output.before("You can't go that way.<br /><br />");
 			}
@@ -303,6 +363,7 @@ $(document).ready(function() {
 
     // Define Invalid Command text    
     function invalidCommand(cmd) {
+		console.log('Invalid Command', cmd);
 		switch(Math.floor(Math.random() * 4) + 1) {
 			case 1:
 				output.before("I don't know the word \""+cmd+"\".<br />");
@@ -354,6 +415,10 @@ $(document).ready(function() {
 			case "bag":
 			case "inventory":
 				bag();
+				break;
+
+			case "use":
+                use(command);
 				break;
 
 			case "read":

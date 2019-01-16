@@ -68,7 +68,7 @@ Rooms.prototype.addExit = function(direction, exit) {
             this.enter = exit;
             break;
         case "exit":
-            this.enter = exit;
+            this.exit = exit;
             break;
         case "open":
             this.open = exit;

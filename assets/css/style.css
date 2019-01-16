@@ -1,8 +1,18 @@
+@font-face {
+  font-family: alien;
+  src: url(../font/Alien-Encounters-Regular.ttf);
+}
+
 body {
     margin: 0;
 }
 div {
     font-family: "Courier New", Courier, monospace;
+}
+
+#zork_title {
+  font-family: alien;
+  font-size: 3.5rem;
 }
 
 .container {

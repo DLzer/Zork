@@ -137,12 +137,33 @@ $(document).ready(function() {
 	
 	// Defines looking in a certain direction
 	function look() {
+
+		// console.log('Is lantern on?', lantern.itemInUse);
+		// console.log('Is room dark?', room.roomIsDark);
 	
-		output.before("<strong>" + room.name + "</strong><br />")
-		output.before(room.look + "<br /><br />");
-	
-		showItems();
-		scrollDown();
+		if( !room.roomIsDark ) {
+
+			output.before("<strong>" + room.name + "</strong><br />");
+			output.before(room.look + "<br /><br />");
+		
+			showItems();
+			scrollDown();
+
+		} else if(room.roomIsDark && !lantern.itemInUse) {
+
+			output.before("<strong>" + room.darkText + "</strong><br />");
+			scrollDown();
+
+		} else if(room.roomIsDark && lantern.itemInUse) {
+
+			output.before("<strong>" + room.name + "</strong><br />");
+			output.before(room.look + "<br /><br />");
+		
+			showItems();
+			scrollDown();
+
+		}
+
 	}
 
 	function read(item) {
@@ -272,21 +293,48 @@ $(document).ready(function() {
 
 		else {
 
-			if (!verbose){
-				if (room.visited) {
-					output.before("<strong>" + itemObj.useDesc + ".</strong><br /><br />");
-					itemObj.itemInUse = true;
+			console.log('Item in use already?', itemObj.itemInUse);
+			if( !itemObj.itemInUse ) {
+
+				if (!verbose){
+					if (room.visited) {
+						output.before("<strong>" + itemObj.useDesc + ".</strong><br /><br />");
+						itemObj.itemInUse = true;
+					}
+					else {
+						output.before("<strong>"+ itemObj.useDesc +"</strong><br /><br />");
+						itemObj.itemInUse = true;
+					}
+					look();
 				}
+
 				else {
-					output.before("<strong>"+ itemObj.useDesc +"</strong><br /><br />");
+					look();
 					itemObj.itemInUse = true;
 				}
+
+			} else if ( itemObj.itemInUse ) {
+
+				if (!verbose){
+					if (room.visited) {
+						output.before("<strong>You put away the " + itemObj.name + ".</strong><br /><br />");
+						itemObj.itemInUse = false;
+					}
+					else {
+						output.before("<strong>You put away the"+ itemObj.name +"</strong><br /><br />");
+						itemObj.itemInUse = false;
+					}
+					look();
+				}
+
+				else {
+					look();
+					itemObj.itemInUse = false;
+				}
+
 			}
 
-			else {
-				look();
-				itemObj.itemInUse = true;
-			}
+
 		}
 
 	}

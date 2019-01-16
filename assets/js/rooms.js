@@ -7,12 +7,14 @@
  * @param {string} items 
  */
 
-var Rooms = function(var_name, name, look, items) {
+var Rooms = function(var_name, name, look, items, roomIsDark) {
     this.var_name = var_name;
     this.name = name;
     this.look = look;
     this.items = items;
     this.visited = false;
+    this.roomIsDark = roomIsDark;
+    this.darkText = "You have moved into a dark place.<br />It is pitch black. You are likely to be eaten by a grue.<br />";
 };
 
 /**
@@ -83,81 +85,81 @@ Rooms.prototype.addExit = function(direction, exit) {
 };
 
 // North of House
-var northOfHouse = new Rooms("northOfHouse","North of House", "You are facing the north side of a white house. There is no door here,<br /> and all the windows are boarded up. To the north a narrow path winds through the trees.", []);
+var northOfHouse = new Rooms("northOfHouse","North of House", "You are facing the north side of a white house. There is no door here,<br /> and all the windows are boarded up. To the north a narrow path winds through the trees.", [], false);
 
 // Forest Path
-var forestPath =  new Rooms("forestPath","Forest Path", "This is a path winding through a dimly lit forest. The path heads north-south here.<br /> One particulary large tree with some low branches stands at the edge of the path.", []);
+var forestPath =  new Rooms("forestPath","Forest Path", "This is a path winding through a dimly lit forest. The path heads north-south here.<br /> One particulary large tree with some low branches stands at the edge of the path.", [], false);
 
 // Forest ( 1 ) 
-var forest_one = new Rooms("forest_one", "Forest", "This is a dimly lit forest, with large trees all around", []);
+var forest_one = new Rooms("forest_one", "Forest", "This is a dimly lit forest, with large trees all around", [], false);
 
 // Forest ( 2 ) 
-var forest_two = new Rooms("forest_two","Forest", "This is a forest, with trees in all directions.<br />To the east, there appears to be light.", []);
+var forest_two = new Rooms("forest_two","Forest", "This is a forest, with trees in all directions.<br />To the east, there appears to be light.", [], false);
 
 // Forest ( 3 ) 
-var forest_three = new Rooms("forest_three","Forest", "This is a dimly lit forest, with large trees all around.", []);
+var forest_three = new Rooms("forest_three","Forest", "This is a dimly lit forest, with large trees all around.", [], false);
 
 // Forest ( 4 ) 
-var forest_four = new Rooms("forest_four","Forest", "The forest thins out, revealing impassable mountains.", []);
+var forest_four = new Rooms("forest_four","Forest", "The forest thins out, revealing impassable mountains.", [], false);
 
 
 //Storm Tossed Impass
-var stormTossed = new Rooms("stormTossed","Forest", "Storm-tossed trees block your way.", []);
+var stormTossed = new Rooms("stormTossed","Forest", "Storm-tossed trees block your way.", [], false);
 
 // South of House
-var southOfHouse = new Rooms("southOfHouse","South of House", "You are facing the south side of a white house.<br /> There is no door here, and all the windows are boarded", []);
+var southOfHouse = new Rooms("southOfHouse","South of House", "You are facing the south side of a white house.<br /> There is no door here, and all the windows are boarded", [], false);
 
 // West of House
-var westOfHouse = new Rooms("westOfHouse","West of House", "This is an open field west of a white house, with a boarded front door.<br />There is a small mailbox here.", [mat]);
+var westOfHouse = new Rooms("westOfHouse","West of House", "This is an open field west of a white house, with a boarded front door.<br />There is a small mailbox here.", [mat], false);
 westOfHouse.visited = true;
 
 // Behind House
-var behindHouse = new Rooms("behindHouse","Behind House", "You are behind the white house. A path leads into the forest to the east. <br />In one corner of the house there is a small window which is slightly ajar.",[]);
+var behindHouse = new Rooms("behindHouse","Behind House", "You are behind the white house. A path leads into the forest to the east. <br />In one corner of the house there is a small window which is slightly ajar.",[], false);
 
 // Window Behind House
-var windowBehindHouse = new Rooms("windowBehindHouse","Behind House", "You are behind the white house. A path leads into the forest to the east. <br />In one corner of the house there is a small window which is open.",[]);
+var windowBehindHouse = new Rooms("windowBehindHouse","Behind House", "You are behind the white house. A path leads into the forest to the east. <br />In one corner of the house there is a small window which is open.",[], false);
 
 // Kitchen
-var kitchen = new Rooms("kitchen","Kitchen", "You are in the kitchen of a the white house. A table seems to have been used recently for the<br />preparation of food. A passage leads to the west and a dark staircase can be seen leading upward.<br /> A dark chimney leads down and to the east is a small window which is open.<br />",[sack, bottle]);
+var kitchen = new Rooms("kitchen","Kitchen", "You are in the kitchen of a the white house. A table seems to have been used recently for the<br />preparation of food. A passage leads to the west and a dark staircase can be seen leading upward.<br /> A dark chimney leads down and to the east is a small window which is open.<br />",[sack, bottle], false);
 
 // Mailbox
 var mailbox = new Rooms("mailbox", "Mailbox", "Opening the mailbox reveals a leaflet.",[leaflet]);
 
 // Tree
-var tree = new Rooms("tree", "Up A Tree", "You are about 10 feet above the ground nestled among some large branches.<br />The nearest branch above you is out of reach. Besides you on the branch is a small birds nest.", [egg]);
+var tree = new Rooms("tree", "Up A Tree", "You are about 10 feet above the ground nestled among some large branches.<br />The nearest branch above you is out of reach. Besides you on the branch is a small birds nest.", [egg], false);
 
 // North clearing
-var northClearing = new Rooms("northClearing", "Clearing", "You are in a clearing, with a forest surrounding you on all sides. A path leads south.", [leaves]);
+var northClearing = new Rooms("northClearing", "Clearing", "You are in a clearing, with a forest surrounding you on all sides. A path leads south.", [leaves], false);
 
 // East clearing
-var eastClearing = new Rooms("eastClearing", "Clearing", "You are in a small clearing in a well marked forest path that extends to the east and west.", []);
+var eastClearing = new Rooms("eastClearing", "Clearing", "You are in a small clearing in a well marked forest path that extends to the east and west.", [], false);
 
 // Canyon View
-var canyonView = new Rooms("canyonView", "Canyon View", "You are at the top of the Great Canyon on its west wall.<br />From here there is a marvelous view of the canyon and parts of the Frigid River upstream. Across the canyon, the walls of the White Cliffs join the mighty ramparts of the Flathead Mountains to the east.<br /> Following the Canyon upstream to the north, Aragain Falls may be seen, complete with rainbow.<br /> The mighty Frigid River flows out from a great dark cavern. To the west and south can be seen an immense forest, stretching for miles around. A path leads northwest.<br > It is possible to climb down into the canyon from here.", []);
+var canyonView = new Rooms("canyonView", "Canyon View", "You are at the top of the Great Canyon on its west wall.<br />From here there is a marvelous view of the canyon and parts of the Frigid River upstream. Across the canyon, the walls of the White Cliffs join the mighty ramparts of the Flathead Mountains to the east.<br /> Following the Canyon upstream to the north, Aragain Falls may be seen, complete with rainbow.<br /> The mighty Frigid River flows out from a great dark cavern. To the west and south can be seen an immense forest, stretching for miles around. A path leads northwest.<br > It is possible to climb down into the canyon from here.", [], false);
 
 // East clearing
-var rockyLedge = new Rooms("rockyLedge", "Rocky Ledge", "You are on a ledge about halfway up the wall of the river canyon.<br />You can see from here that the main flow from Aragain Falls twists along a passage which it is impossible for you to enter.<br />Below you is the canyon bottom. Above you is more cliff, which appears climbable.", []);
+var rockyLedge = new Rooms("rockyLedge", "Rocky Ledge", "You are on a ledge about halfway up the wall of the river canyon.<br />You can see from here that the main flow from Aragain Falls twists along a passage which it is impossible for you to enter.<br />Below you is the canyon bottom. Above you is more cliff, which appears climbable.", [], false);
 
 // canyonBottom
-var canyonBottom = new Rooms("canyonBottom", "Canyon Bottom", "You are beneath the walls of the river canyon which may be climbable here.<br />The lesser part of the runoff of Aragain Falls flows by below. To the north is a narrow path.", []);
+var canyonBottom = new Rooms("canyonBottom", "Canyon Bottom", "You are beneath the walls of the river canyon which may be climbable here.<br />The lesser part of the runoff of Aragain Falls flows by below. To the north is a narrow path.", [], false);
 
 // canyonBottom
-var endOfRainbow = new Rooms("endOfRainbow", "End of Rainbow", "You are on a small, rocky beach on the continuation of the Frigid River past the Falls.<br /> The beach is narrow due to the presence of the White Cliffs. The river canyon opens here and sunlight shines in from above.<br />A rainbow crosses over the falls to the east and a narrow path continues to the southwest.", []);
+var endOfRainbow = new Rooms("endOfRainbow", "End of Rainbow", "You are on a small, rocky beach on the continuation of the Frigid River past the Falls.<br /> The beach is narrow due to the presence of the White Cliffs. The river canyon opens here and sunlight shines in from above.<br />A rainbow crosses over the falls to the east and a narrow path continues to the southwest.", [], false);
 
 // Chimney
-var chimney = new Rooms("chimney", "Chimney", "You have moved into a dark place.<br />It is pitch black. You are likely to be eaten by a grue.",[]);
+var chimney = new Rooms("chimney", "Chimney", "You are in a small cold chimney, on the wall reads 'Santa was here'.",[], true);
 
 // Living Room
-var livingRoom = new Rooms("livingRoom", "Living Room", "You are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the room.",[sword, lantern]);
+var livingRoom = new Rooms("livingRoom", "Living Room", "You are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the room.",[sword, lantern], false);
 
 // Living Room
-var livingRoomRugMoved = new Rooms("livingRoomRugMoved", "Living Room", "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",[sword, lantern]);
+var livingRoomRugMoved = new Rooms("livingRoomRugMoved", "Living Room", "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",[sword, lantern], false);
 
 // living Room Trap Door
-var livingRoomTrapDoor = new Rooms("livingRoomTrapDoor", "Trap Door", "The door reluctantly opens to reveal a rickety staircase descending into darkness.",[]);
+var livingRoomTrapDoor = new Rooms("livingRoomTrapDoor", "Trap Door", "The door reluctantly opens to reveal a rickety staircase descending into darkness.",[], false);
 
 // Cellar
-var cellar = new Rooms("cellar", "Cellar", "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.",[]);
+var cellar = new Rooms("cellar", "Cellar", "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.",[], true);
 
 
 // Forest One
@@ -254,6 +256,8 @@ livingRoomRugMoved.addExit("open", livingRoomTrapDoor);
 // Living Room Trap Door
 livingRoomTrapDoor.addExit("down", cellar);
 livingRoomTrapDoor.addExit("east", kitchen);
+// Cellar
+cellar.addExit("up", livingRoom);
 
 
 

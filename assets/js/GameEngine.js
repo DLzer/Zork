@@ -1,7 +1,7 @@
 GameEngine = {
     
-    gameState = {
-        player = {
+    gameState: {
+        player: {
             roomId: 0,
             inventory: [],
             score: 0
@@ -10,20 +10,22 @@ GameEngine = {
         moves: 0,
     },
 
-    inputElement    = $('input'),
-    outputElement   = $('.commandline'),
-    verbose         = false,
-    roomView        = $('.room'),
-    allowedVerbs = [
+    outputElement:  $('.commandline'),
+    verbose:        false,
+    roomView:       $('.room'),
+    allowedVerbs: [
         "GO", "LOOK", "TAKE", "PUSH",
         "PULL", "DROP", "OPEN", "WAIT",
-        "CLOSE", "INVENTORY", "ZYZZY", "HELP"
+        "CLOSE", "INVENTORY", "ZYZZY", "HELP",
+        "USE", "NORTH", "EAST", "SOUTH", "WEST",
+        "UP", "DOWN", "LEFT", "RIGHT"
     ],
 
     /**
      * Start the game engine
      */
     init: () => {
+        console.log('**INITIALIZING GAME ENGINE**')
         GameEngine.startCommandListener()
         GameEngine.loadSavedGame()
     },
@@ -32,12 +34,55 @@ GameEngine = {
      * Start terminal command listener
      */
     startCommandListener: () => {
-        GameEngine.inputElement.on('keypress', (event) => {
+        $('input').on('keypress', (event) => {
             if( event.which === 13 ) {
                 GameEngine.submitCommand();
                 GameEngine.scrollDown();
             }
+        });
+    },
+
+    /**
+     * Parse the entered command
+     */
+    submitCommand: () => {
+        // Get command input
+        let cmd = $('input').val();
+        // Drop command to lower case
+        // This function is easier to implement and still runs in O(n)
+        cmd = cmd.toUpperCase();
+        // Split any words separated by a space into array parts.
+        // This function is based off the similar python implementation.
+        cmd = cmd.split(/(\s+)/).filter( e => e.trim().length > 0);
+        // Validate that the command is within the acceptable commands array.
+        for ( var i=0; i < cmd.length; i++ ) {
+            if ( !GameEngine.validateCommand(cmd[i]) ) {
+                GameEngine.invalidCommand();
+                $('input').val('');
+                break;
+            }
         }
+        // Command is valid
+        $('input').val('');
+        console.log(cmd);
+    },
+
+    /**
+     * Validate that the parameter CMD is within the
+     * allowed verbs array.
+     * 
+     * @param {string} cmd The input command
+     * @returns {bool}
+     */
+    validateCommand: (cmd) => {
+        if ( GameEngine.allowedVerbs.includes(cmd)) {
+            return true;
+        }
+        return false;
+    },
+
+    invalidCommand: () => {
+        $('.commandline').before("Oh no, that doesn't look right!<br>");
     },
 
     /**
@@ -139,3 +184,7 @@ GameEngine = {
     },
 
 }
+
+$(document).ready(function() {
+    GameEngine.init();
+})

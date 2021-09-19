@@ -1,0 +1,98 @@
+[
+    {
+        "varString": "sack",
+        "name": "sack",
+        "specialDesc": "elongated brown sack",
+        "description": "smelling of hot peppers",
+        "contents": "hot peppers",
+        "taken": false,
+        "actionArray": ["open", "eat"],
+        "openDesc": "Opening the sack reveals a lunch, and a clove of garlic.",
+        "useDesc": "What the heck! You won't make friends this way, but nobody around here is too friendly anyhow. Gulp!",
+        "inUse": false
+    },
+    {
+        "varString": "bottle",
+        "name": "bottle",
+        "specialDesc": null,
+        "description": "A glass bottle is sitting on the table containing a quantity of water.",
+        "contents": "quantity of water",
+        "taken": false,
+        "actionArray": ["open", "drink"],
+        "openDesc": "Opened bottle of water.",
+        "useDesc": "Thank you very much. I was rather thirsty ( from all this talking, probably).",
+        "inUse": false
+    },
+    {
+        "varString": "leaflet",
+        "name": "leaflet",
+        "specialDesc": null,
+        "description": "A small leaflet",
+        "contents": "WELCOME TO ZORK!<br /><br />ZORK is a game of adventure, danger and low cunning.<br />In it you will explore some of the most amazing territory ever seen by mortals.<br />No computer should be without one!",
+        "taken": false,
+        "actionArray": ["read"],
+        "openDesc": null,
+        "useDesc": null,
+        "inUse": false
+    },
+    {
+        "varString": "mat",
+        "name": "mat",
+        "specialDesc": "A rubber mat saying 'Welcome to Zork!' lies by the door.",
+        "description": "A rubber mat",
+        "contents": null,
+        "taken": false,
+        "actionArray": [],
+        "openDesc": null,
+        "useDesc": null,
+        "inUse": false
+    },
+    {
+        "varString": "egg",
+        "name": "egg",
+        "specialDesc": "In the birds nest is a large egg encrusted with precious jewels, apparently scavenged by a childless songbird. The egg is covered with fine gold inlay, and ornamented in lapis lazuli and mother-of-pearl. Unlike most eggs, this one is hinged and closed with a delicate looking clasp. The egg appears extremely fragile.",
+        "description": null,
+        "contents": null,
+        "taken": false,
+        "actionArray": ["open", "use"],
+        "openDesc": "You've opened the egg.",
+        "useDesc": "The egg glimmers, blinds you, and you fall to the ground.",
+        "inUse": false
+    },
+    {
+        "varString": "leaves",
+        "name": "grating",
+        "specialDesc": "On the ground is a pile of leaves.",
+        "description": null,
+        "contents": null,
+        "taken": false,
+        "actionArray": ["use"],
+        "openDesc": null,
+        "useDesc": "You place the grating on the ground. Great...",
+        "inUse": false
+    },
+    {
+        "varString": "sword",
+        "name": "elven sword",
+        "specialDesc": "Above the trophy case hangs an elvish sword of great antiquity.",
+        "description": null,
+        "contents": null,
+        "taken": false,
+        "actionArray": ["use", "attack"],
+        "openDesc": "You pull the elven sword from your bag and hold it high in the air. It glows with a mystical aura.",
+        "useDesc": "You fiercly swing the sword.",
+        "inUse": false
+    },
+    {
+        "varString": "lantern",
+        "name": "brass lantern",
+        "specialDesc": "A battery-powered brass lantern is on the trophy case.",
+        "description": "brass ",
+        "contents": null,
+        "taken": false,
+        "actionArray": ["use", "on", "off"],
+        "openDesc": null,
+        "useDesc": "The brass lantern is now on.",
+        "inUse": false
+    }
+]

@@ -17,7 +17,7 @@ GameEngine = {
     allowedVerbs: [
         "GO", "LOOK", "TAKE", "PUSH",
         "PULL", "DROP", "OPEN", "WAIT",
-        "CLOSE", "INVENTORY", "ZYZZY", "HELP",
+        "CLOSE", "INVENTORY", "BAG", "ZYZZY", "HELP",
         "USE", "NORTH", "EAST", "SOUTH", "WEST",
         "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET",
         "HELP", "STATE", "BRIEF", "VERBOSE",
@@ -183,7 +183,8 @@ GameEngine = {
             "OPEN":       GameEngine.Open,
             "WAIT":       GameEngine.Wait,
             "CLOSE":      GameEngine.Close,
-            "INVENTORY":  GameEngine.Inventory,
+            "INVENTORY":  GameEngine.printInventory,
+            "BAG":        GameEngine.printInventory,
             "XYZZY":      function() { return true; },
             "HELP":       GameEngine.printHelp,
             "SAVE":       GameEngine.saveGame,
@@ -207,6 +208,8 @@ GameEngine = {
     },
 
     /********* CORE COMMANDS *********/
+
+    // Outputs a help dialog to the player
     printHelp: () => {
         GameEngine.cliOutput("Here is a list of acceptable commands:");
         var acceptedCommands = ['> go [direction]', '> north', '> east', '> south', '> west', '> up', '> down', '> look', '> open', '> enter', '> exit','> climb', '> brief [ short descriptions ]', '> verbose [ long descriptions ]', '> help', '> take', '> bag', '> save [ Save current game]', '> reset [ Reset game including save ]'];
@@ -214,12 +217,22 @@ GameEngine = {
             GameEngine.cliOutput(acceptedCommands[i]);
         }
     },
-
+    printInventory: () => {
+        if(GameEngine.gameState.player.inventory === undefined || GameEngine.gameState.player.inventory == 0) {
+			GameEngine.cliOutput("There is nothing in your bag!");
+		} else {
+			GameEngine.cliOutput("Your bag contains:");
+			for(j=0;j<GameEngine.gameState.player.inventory.length;j++) {
+				GameEngine.cliOutput(GameEngine.gameState.player.inventory[j].name);
+			}
+		}
+    },
+    // Sets the output of items and rooms to verbose mode
     setVerboseOutput: () => {
         GameEngine.gameState.verbose = true;
         GameEngine.cliOutput("ZORK is now in its \"verbose\" mode, which always gives long descriptions of locations (even if you've been there before).");
     },
-
+    // Sets the output of items and rooms to brief mode
     setBriefOutput: () => {
         GameEngine.gameState.verbose = false;
         GameEngine.cliOutput("ZORK is now in its normal \"brief\" printing mode, which gives long descriptions of places never before visited, and short descriptions otherwise.");

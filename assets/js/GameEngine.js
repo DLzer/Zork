@@ -2,7 +2,7 @@ GameEngine = {
     
     gameState: {
         player: {
-            roomId: 0,
+            room: westOfHouse,
             inventory: [],
             score: 0
         },
@@ -20,7 +20,8 @@ GameEngine = {
         "CLOSE", "INVENTORY", "BAG", "ZYZZY", "HELP",
         "USE", "NORTH", "EAST", "SOUTH", "WEST",
         "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET",
-        "HELP", "STATE", "BRIEF", "VERBOSE",
+        "HELP", "STATE", "BRIEF", "VERBOSE", "_SHOWROOMS",
+        "_SHOWITEMS",
     ],
 
     /**
@@ -100,8 +101,8 @@ GameEngine = {
     /**
      * Set the values of the game state
      */
-    setGameState: (roomId, inventory, score, saved, moves) => {
-        GameEngine.gameState.player.roomId    = roomId;
+    setGameState: (room, inventory, score, saved, moves) => {
+        GameEngine.gameState.player.room      = room;
         GameEngine.gameState.player.inventory = inventory;
         GameEngine.gameState.player.score     = score;
         GameEngine.gameState.saved            = saved;
@@ -115,7 +116,7 @@ GameEngine = {
         if(localStorage.getItem('zorkSaveGame')) {
             savedGame = JSON.parse(localStorage.getItem('zorkSaveGameState'));
             GameEngine.setGameState(
-                savedGame.player.roomId,
+                savedGame.player.room,
                 savedGame.player.inventory,
                 savedGame.player.score,
                 savedGame.saved,
@@ -128,7 +129,9 @@ GameEngine = {
      * Save a current gameState object
      */
     saveGame: () => {
+        GameEngine.gameState.saved = true;
         localStorage.setItem('zorkSaveGameState', GameEngine.gameState);
+        GameEngine.cliOutput("Your game state has been saved.");
         console.log("**GameEngine: Game state saved");
     },
 
@@ -136,7 +139,8 @@ GameEngine = {
      * Reset a gameState object
      */
     resetGame: () => {
-        GameEngine.setGameState(0,[],0,false,0);
+        GameEngine.setGameState(westOfHouse,[],0,false,0);
+        GameEngine.cliOutput("Your game state has been reset.");
         console.log("**GameEngine: Game state reset");
     },
 
@@ -175,7 +179,7 @@ GameEngine = {
 
         var verbMap = {
             "GO":         GameEngine.Go,
-            "LOOK":       GameEngine.Look,
+            "LOOK":       GameEngine.lookAction,
             "TAKE":       GameEngine.Take,
             "PUSH":       GameEngine.Push,
             "PULL":       GameEngine.Pull,
@@ -192,6 +196,8 @@ GameEngine = {
             "STATE":      GameEngine.printState,
             "BRIEF":      GameEngine.setBriefOutput,
             "VERBOSE":    GameEngine.setVerboseOutput,
+            "_SHOWROOMS": GameEngine.showRooms,
+            "_SHOWITEMS": GameEngine.showItems,
         }
  
         verbMap[ cmd ]( arg );
@@ -236,7 +242,72 @@ GameEngine = {
     setBriefOutput: () => {
         GameEngine.gameState.verbose = false;
         GameEngine.cliOutput("ZORK is now in its normal \"brief\" printing mode, which gives long descriptions of places never before visited, and short descriptions otherwise.");
-    }
+    },
+
+    /********* DIRECTIONAL COMMANDS *********/
+
+    showRooms: () => {
+
+    },
+
+    showItems: () => {
+
+    },
+
+    lookAction: () => {
+
+        let currentRoom = GameEngine.gameState.player.room;
+
+        if( !currentRoom.roomIsDark ) {
+
+			GameEngine.cliOutput("<strong>" + currentRoom.name + "</strong>");
+			GameEngine.cliOutput(currentRoom.look + "<br>");
+		
+			GameEngine.showItems(currentRoom);
+
+		} else if(currentRoom.roomIsDark && !lantern.itemInUse) {
+
+			GameEngine.cliOutput("<strong>" + currentRoom.darkText + "</strong>");
+
+		} else if(currentRoom.roomIsDark && lantern.itemInUse) {
+
+			GameEngine.cliOutput("<strong>" + currentRoom.name + "</strong>");
+			GameEngine.cliOutput(currentRoom.look + "<br>");
+		
+			GameEngine.showItems(currentRoom);
+
+		}
+    },
+
+    showItems: (room) => {
+
+        let itemlist = [];
+	
+		for (var i = 0; i < room.items.length; i++) {
+			if (room.items[i].specialdesc) {
+				GameEngine.cliOutput(room.items[i].specialdesc + "<br>");
+			}
+			else {
+				itemlist.push(room.items[i].desc);
+			}
+		}
+	
+		if (itemlist.length === 1) {
+			GameEngine.cliOutput("There is a " + itemlist[0]);
+		}
+		else if (itemlist.length > 1) {
+			var str = "";
+			for (var i = 0; i < itemlist.length; i++) {
+				if (!itemlist[i + 1]) {
+					str.concat(itemlist[i]);
+				}
+				else {
+					str.concat(itemlist[i] + ", ");
+				}
+			}
+			GameEngine.cliOutput("There is a " + str + " here.");
+		}
+    },
 
 }
 

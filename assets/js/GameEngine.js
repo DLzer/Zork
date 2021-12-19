@@ -4,7 +4,8 @@ GameEngine = {
         player: {
             room: westOfHouse,
             inventory: [],
-            score: 0
+            score: 0,
+            previousRoom: null
         },
         saved: false,
         moves: 0,
@@ -15,7 +16,7 @@ GameEngine = {
     verbose:        false,
     roomView:       $('.room'),
     allowedVerbs: [
-        "GO", "LOOK", "TAKE", "PUSH",
+        "GO", "LOOK", "TAKE", "PUSH", "BACK",
         "PULL", "DROP", "OPEN", "WAIT",
         "CLOSE", "INVENTORY", "BAG", "ZYZZY", "HELP",
         "USE", "NORTH", "EAST", "SOUTH", "WEST",
@@ -71,9 +72,9 @@ GameEngine = {
 
         executableCommand = cmd[0];
         commandArgument   = (cmd[1]) ? cmd[1] : null;
-
+        console.log("**Game Engine: Command raw input:",cmd);
+        console.log("**Game Engine: Command executables:", [executableCommand, commandArgument]);
         GameEngine.executeCommand(executableCommand, commandArgument);
-        console.log(cmd);
     },
 
     /**
@@ -178,9 +179,9 @@ GameEngine = {
     executeCommand: (cmd, arg = null) => {
 
         var verbMap = {
-            "GO":         GameEngine.Go,
+            "GO":         GameEngine.goAction,
             "LOOK":       GameEngine.lookAction,
-            "TAKE":       GameEngine.Take,
+            "TAKE":       GameEngine.takeAction,
             "PUSH":       GameEngine.Push,
             "PULL":       GameEngine.Pull,
             "DROP":       GameEngine.Drop,
@@ -196,8 +197,6 @@ GameEngine = {
             "STATE":      GameEngine.printState,
             "BRIEF":      GameEngine.setBriefOutput,
             "VERBOSE":    GameEngine.setVerboseOutput,
-            "_SHOWROOMS": GameEngine.showRooms,
-            "_SHOWITEMS": GameEngine.showItems,
         }
  
         verbMap[ cmd ]( arg );
@@ -244,19 +243,15 @@ GameEngine = {
         GameEngine.cliOutput("ZORK is now in its normal \"brief\" printing mode, which gives long descriptions of places never before visited, and short descriptions otherwise.");
     },
 
+    getCurrentRoom: () => {
+        return GameEngine.gameState.player.room;
+    },
+
     /********* DIRECTIONAL COMMANDS *********/
-
-    showRooms: () => {
-
-    },
-
-    showItems: () => {
-
-    },
 
     lookAction: () => {
 
-        let currentRoom = GameEngine.gameState.player.room;
+        let currentRoom = GameEngine.getCurrentRoom();
 
         if( !currentRoom.roomIsDark ) {
 
@@ -308,6 +303,68 @@ GameEngine = {
 			GameEngine.cliOutput("There is a " + str + " here.");
 		}
     },
+
+    goAction: (direction) => {
+
+        let currentRoom = GameEngine.getCurrentRoom();
+        let lDirection = direction.toLowerCase();
+
+        if (lDirection === undefined) 
+        {
+            output.before("You can't go that way.");
+        }
+        else 
+        {
+
+            if ( lDirection == "back" ) {
+                console.log("**GameEngine: Moving "+lDirection);
+                console.log("**GameEngine: New Room - ", GameEngine.gameState.player.previousRoom);
+                GameEngine.gameState.player.room = GameEngine.gameState.player.previousRoom;
+                GameEngine.gameState.player.previousRoom = currentRoom;
+                currentRoom = GameEngine.gameState.player.room;
+            } else {
+                console.log("**GameEngine: Moving "+lDirection);
+                console.log("**GameEngine: New Room - ", currentRoom[lDirection]);
+                GameEngine.gameState.player.previousRoom = currentRoom;
+                GameEngine.gameState.player.room = currentRoom[lDirection];
+                currentRoom = GameEngine.gameState.player.room;
+            }
+
+            if (GameEngine.gameState.verbose){
+                if (currentRoom.visited) {
+                    GameEngine.cliOutput("<strong>" + currentRoom.name + "</strong>");
+                    GameEngine.showItems(currentRoom);
+                }
+                else {
+                    GameEngine.lookAction();
+                    currentRoom.visited = true;
+                }
+            }
+
+            else {
+                GameEngine.lookAction();
+                currentRoom.visited = true;
+            }
+        }
+    },
+
+    takeAction: (item) => {
+
+        let lItem = item.toLowerCase();
+        let currentRoom = GameEngine.getCurrentRoom();
+
+        if ( !currentRoom.items.lItem ) {
+            GameEngine.cliOutput("A "+lItem+" does not exist here.");
+        }
+
+        if ( GameEngine.gameState.player.inventory[lItem] ) {
+            GameEngine.cliOutput("The "+lItem+" is already in your bag.");
+        }
+
+        GameEngine.gameState.player.inventory.push(currentRoom.items[lItem]);
+        GameEngine.cliOutput("You put the "+lItem+" in your bag.");
+        
+    }
 
 }
 

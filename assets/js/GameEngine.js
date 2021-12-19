@@ -8,6 +8,7 @@ GameEngine = {
         },
         saved: false,
         moves: 0,
+        verbose: false,
     },
 
     outputElement:  $('.commandline'),
@@ -18,7 +19,8 @@ GameEngine = {
         "PULL", "DROP", "OPEN", "WAIT",
         "CLOSE", "INVENTORY", "ZYZZY", "HELP",
         "USE", "NORTH", "EAST", "SOUTH", "WEST",
-        "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET"
+        "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET",
+        "HELP", "STATE", "BRIEF", "VERBOSE",
     ],
 
     /**
@@ -60,7 +62,7 @@ GameEngine = {
             if ( !GameEngine.validateCommand(cmd[i]) ) {
                 GameEngine.invalidCommand();
                 $('input').val('');
-                break;
+                return;
             }
         }
         // Command is valid
@@ -186,7 +188,9 @@ GameEngine = {
             "HELP":       GameEngine.printHelp,
             "SAVE":       GameEngine.saveGame,
             "RESET":      GameEngine.resetGame,
-            "STATE":      GameEngine.printState
+            "STATE":      GameEngine.printState,
+            "BRIEF":      GameEngine.setBriefOutput,
+            "VERBOSE":    GameEngine.setVerboseOutput,
         }
  
         verbMap[ cmd ]( arg );
@@ -209,6 +213,16 @@ GameEngine = {
         for(i = 0; i < acceptedCommands.length; i++) {
             GameEngine.cliOutput(acceptedCommands[i]);
         }
+    },
+
+    setVerboseOutput: () => {
+        GameEngine.gameState.verbose = true;
+        GameEngine.cliOutput("ZORK is now in its \"verbose\" mode, which always gives long descriptions of locations (even if you've been there before).");
+    },
+
+    setBriefOutput: () => {
+        GameEngine.gameState.verbose = false;
+        GameEngine.cliOutput("ZORK is now in its normal \"brief\" printing mode, which gives long descriptions of places never before visited, and short descriptions otherwise.");
     }
 
 }

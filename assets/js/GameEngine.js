@@ -18,7 +18,7 @@ GameEngine = {
         "PULL", "DROP", "OPEN", "WAIT",
         "CLOSE", "INVENTORY", "ZYZZY", "HELP",
         "USE", "NORTH", "EAST", "SOUTH", "WEST",
-        "UP", "DOWN", "LEFT", "RIGHT"
+        "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET"
     ],
 
     /**
@@ -28,6 +28,7 @@ GameEngine = {
         console.log('**INITIALIZING GAME ENGINE**')
         GameEngine.startCommandListener()
         GameEngine.loadSavedGame()
+        console.log('**GameEngine: Last game state:', GameEngine.gameState);
     },
 
     /**
@@ -64,6 +65,11 @@ GameEngine = {
         }
         // Command is valid
         $('input').val('');
+
+        executableCommand = cmd[0];
+        commandArgument   = (cmd[1]) ? cmd[1] : null;
+
+        GameEngine.executeCommand(executableCommand, commandArgument);
         console.log(cmd);
     },
 
@@ -85,15 +91,19 @@ GameEngine = {
         $('.commandline').before("Oh no, that doesn't look right!<br>");
     },
 
+    cliOutput: (output) => {
+        $('.commandLine').before(output+"<br>");
+    },
+
     /**
      * Set the values of the game state
      */
     setGameState: (roomId, inventory, score, saved, moves) => {
-        GameEngine.player.roomId    = roomId;
-        GameEngine.player.inventory = inventory;
-        GameEngine.player.score     = score;
-        GameEngine.saved            = saved;
-        GameEngine.moves            = moves;
+        GameEngine.gameState.player.roomId    = roomId;
+        GameEngine.gameState.player.inventory = inventory;
+        GameEngine.gameState.player.score     = score;
+        GameEngine.gameState.saved            = saved;
+        GameEngine.gameState.moves            = moves;
     },
 
     /**
@@ -117,13 +127,19 @@ GameEngine = {
      */
     saveGame: () => {
         localStorage.setItem('zorkSaveGameState', GameEngine.gameState);
+        console.log("**GameEngine: Game state saved");
     },
 
     /**
      * Reset a gameState object
      */
     resetGame: () => {
-        GameEngine.setGameState(0,[],0,false,0)
+        GameEngine.setGameState(0,[],0,false,0);
+        console.log("**GameEngine: Game state reset");
+    },
+
+    printState: () => {
+        console.log("**GameEngine: Current game state", GameEngine.gameState);
     },
 
     /**
@@ -167,7 +183,10 @@ GameEngine = {
             "CLOSE":      GameEngine.Close,
             "INVENTORY":  GameEngine.Inventory,
             "XYZZY":      function() { return true; },
-            "HELP":       GameEngine.Help
+            "HELP":       GameEngine.printHelp,
+            "SAVE":       GameEngine.saveGame,
+            "RESET":      GameEngine.resetGame,
+            "STATE":      GameEngine.printState
         }
  
         verbMap[ cmd ]( arg );
@@ -182,6 +201,15 @@ GameEngine = {
 		// objDiv.scrollTop = objDiv.scrollHeight;
 		$('#content-inner').scrollTop(10000);
     },
+
+    /********* CORE COMMANDS *********/
+    printHelp: () => {
+        GameEngine.cliOutput("Here is a list of acceptable commands:");
+        var acceptedCommands = ['> go [direction]', '> north', '> east', '> south', '> west', '> up', '> down', '> look', '> open', '> enter', '> exit','> climb', '> brief [ short descriptions ]', '> verbose [ long descriptions ]', '> help', '> take', '> bag', '> save [ Save current game]', '> reset [ Reset game including save ]'];
+        for(i = 0; i < acceptedCommands.length; i++) {
+            GameEngine.cliOutput(acceptedCommands[i]);
+        }
+    }
 
 }
 

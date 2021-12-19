@@ -19,10 +19,10 @@ GameEngine = {
         "GO", "LOOK", "TAKE", "PUSH", "BACK",
         "PULL", "DROP", "OPEN", "WAIT",
         "CLOSE", "INVENTORY", "BAG", "ZYZZY", "HELP",
-        "USE", "NORTH", "EAST", "SOUTH", "WEST",
+        "USE", "NORTH", "EAST", "SOUTH", "WEST", "MAILBOX",
         "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET",
         "HELP", "STATE", "BRIEF", "VERBOSE", "_SHOWROOMS",
-        "_SHOWITEMS",
+        "_SHOWITEMS"
     ],
 
     /**
@@ -85,7 +85,7 @@ GameEngine = {
      * @returns {bool}
      */
     validateCommand: (cmd) => {
-        if ( GameEngine.allowedVerbs.includes(cmd)) {
+        if ( GameEngine.allowedVerbs.includes(cmd) || itemArray.includes(cmd.toLocaleLowerCase())) {
             return true;
         }
         return false;
@@ -185,7 +185,7 @@ GameEngine = {
             "PUSH":       GameEngine.Push,
             "PULL":       GameEngine.Pull,
             "DROP":       GameEngine.Drop,
-            "OPEN":       GameEngine.Open,
+            "OPEN":       GameEngine.openAction,
             "WAIT":       GameEngine.Wait,
             "CLOSE":      GameEngine.Close,
             "INVENTORY":  GameEngine.printInventory,
@@ -348,20 +348,57 @@ GameEngine = {
         }
     },
 
+    openAction: (direction) => {
+
+        let currentRoom = GameEngine.getCurrentRoom();
+
+        if (currentRoom["open"] === undefined || !currentRoom["open"]) 
+        {
+            output.before("You can't open that.");
+        }
+        else 
+        {
+
+        console.log("**GameEngine: Opening");
+        console.log("**GameEngine: New Room - ", currentRoom["open"]);
+        GameEngine.gameState.player.previousRoom = currentRoom;
+        GameEngine.gameState.player.room = currentRoom["open"];
+        currentRoom = GameEngine.gameState.player.room;
+
+            if (GameEngine.gameState.verbose){
+                if (currentRoom.visited) {
+                    GameEngine.cliOutput("<strong>" + currentRoom.name + "</strong>");
+                    GameEngine.showItems(currentRoom);
+                }
+                else {
+                    GameEngine.lookAction();
+                    currentRoom.visited = true;
+                }
+            }
+
+            else {
+                GameEngine.lookAction();
+                currentRoom.visited = true;
+            }
+        }
+    },
+
     takeAction: (item) => {
 
         let lItem = item.toLowerCase();
+        let itemObject = itemObjects[lItem];
         let currentRoom = GameEngine.getCurrentRoom();
 
-        if ( !currentRoom.items.lItem ) {
+        if ( !currentRoom.items.includes(itemObject) ) {
             GameEngine.cliOutput("A "+lItem+" does not exist here.");
         }
 
-        if ( GameEngine.gameState.player.inventory[lItem] ) {
+        if ( GameEngine.gameState.player.inventory[itemObject] ) {
             GameEngine.cliOutput("The "+lItem+" is already in your bag.");
         }
 
-        GameEngine.gameState.player.inventory.push(currentRoom.items[lItem]);
+        console.log(itemObject);
+        GameEngine.gameState.player.inventory.push(itemObject);
         GameEngine.cliOutput("You put the "+lItem+" in your bag.");
         
     }

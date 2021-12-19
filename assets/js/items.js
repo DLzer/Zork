@@ -26,5 +26,16 @@ var itemArray = [
     'egg',
     'leaves',
     'sword',
-    'lantern'
+    'lantern',
 ];
+
+var itemObjects = {
+    'sack': sack,
+    'bottle': bottle,
+    'leaflet': leaflet,
+    'mat': mat,
+    'egg': egg,
+    'leaves': leaves,
+    'sword': sword,
+    'lantern': lantern
+}

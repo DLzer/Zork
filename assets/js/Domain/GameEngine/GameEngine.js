@@ -10,10 +10,12 @@ GameEngine = {
         "CLOSE", "INVENTORY", "BAG", "ZYZZY", "HELP",
         "USE", "NORTH", "EAST", "SOUTH", "WEST", "MAILBOX",
         "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET",
-        "HELP", "STATE", "BRIEF", "VERBOSE", "READ"
+        "HELP", "STATE", "BRIEF", "VERBOSE", "READ",
+        "CLIMB", "UP", "DOWN",
     ],
     openableInstances: [
-        "WINDOW", "DOOR", "TRAPDOOR", "TRAP"
+        "WINDOW", "DOOR", "TRAPDOOR", "TRAP", "TREE", "KITCHEN",
+        "CHIMNEY",
     ],
 
     /**
@@ -152,9 +154,18 @@ GameEngine = {
 
         var verbMap = {
             "GO":         GameEngine.goAction,
+                "NORTH":  GameEngine.goAction,
+                "SOUTH":  GameEngine.goAction,
+                "EAST":   GameEngine.goAction,
+                "WEST":   GameEngine.goAction,
+                "BACK":   GameEngine.goAction,
+            "CLIMB":      GameEngine.goAction,
+            "UP":         GameEngine.goAction,
+            "DOWN":       GameEngine.goAction,
+            "ENTER":      GameEngine.goAction,
             "LOOK":       GameEngine.lookAction,
             "TAKE":       GameEngine.takeAction,
-            "ENTER":      GameEngine.goAction,
+            "USE":        GameEngine.useAction,
             // "PUSH":       GameEngine.Push,
             // "PULL":       GameEngine.Pull,
             "DROP":       GameEngine.dropAction,
@@ -172,7 +183,11 @@ GameEngine = {
             "VERBOSE":    GameEngine.setVerboseOutput,
         }
  
-        verbMap[ cmd ]( arg );
+        if ( ["NORTH", "SOUTH", "EAST", "WEST", "BACK", "CLIMB", "ENTER", "UP", "DOWN"].includes(cmd) ) {
+            verbMap[ cmd ]( cmd );
+        } else {
+            verbMap[ cmd ]( arg );
+        }
 
     },
 
@@ -287,44 +302,48 @@ GameEngine = {
         let currentRoom = GameEngine.getCurrentRoom();
         let lDirection = direction.toLowerCase();
 
-        if (lDirection === undefined) 
-        {
-            output.before("You can't go that way.");
+        if ( lDirection == "back" ) {
+            console.log("**GameEngine: Moving "+lDirection);
+            GameEngine.player.setCurrentLocation(GameEngine.player.getPreviousLocation());
+            GameEngine.player.setPreviousLocation(roomList[currentRoom].varName);
+            currentRoom = GameEngine.getCurrentRoom();
+        } else {
+
+            if (roomList[currentRoom][lDirection] === undefined) 
+            {
+                GameEngine.cliOutput("You can't go that way.");
+                return;
+            }
+
+            console.log("**GameEngine: Moving "+lDirection);
+            GameEngine.player.setPreviousLocation(roomList[currentRoom].varName);
+            GameEngine.player.setCurrentLocation(roomList[currentRoom][lDirection].varName);
+            currentRoom = GameEngine.getCurrentRoom();
         }
-        else 
-        {
 
-            if ( lDirection == "back" ) {
-                console.log("**GameEngine: Moving "+lDirection);
-                GameEngine.player.setCurrentLocation(GameEngine.player.getPreviousLocation());
-                GameEngine.player.setPreviousLocation(roomList[currentRoom].varName);
-                currentRoom = GameEngine.getCurrentRoom();
-            } else {
-                console.log("**GameEngine: Moving "+lDirection);
-                GameEngine.player.setPreviousLocation(roomList[currentRoom].varName);
-                GameEngine.player.setCurrentLocation(roomList[currentRoom][lDirection].varName);
-                currentRoom = GameEngine.getCurrentRoom();
+        if (GameEngine.player.getVerboseMode()){
+            if (currentRoom.visited) {
+                GameEngine.cliOutput("<strong>" + roomList[currentRoom].name + "</strong>");
+                GameEngine.showItems(roomList[currentRoom]);
             }
-
-            if (GameEngine.player.getVerboseMode()){
-                if (currentRoom.visited) {
-                    GameEngine.cliOutput("<strong>" + roomList[currentRoom].name + "</strong>");
-                    GameEngine.showItems(roomList[currentRoom]);
-                }
-                else {
-                    GameEngine.lookAction();
-                    roomList[currentRoom].visited = true;
-                }
-            }
-
             else {
                 GameEngine.lookAction();
                 roomList[currentRoom].visited = true;
             }
         }
+
+        else {
+            GameEngine.lookAction();
+            roomList[currentRoom].visited = true;
+        }
     },
 
     openAction: (direction) => {
+
+        if ( direction == "EGG" ) {
+            GameEngine.useAction("EGG");
+            return;
+        }
 
         let currentRoom = GameEngine.getCurrentRoom();
 
@@ -414,6 +433,38 @@ GameEngine = {
 
         GameEngine.player.removeFromInventory(lItem);
         GameEngine.cliOutput("You have dropped the "+lItem);
+
+    },
+
+    useAction: (item) => {
+
+        if ( !item ) {
+            GameEngine.cliOutput("Use what?");
+        }
+
+        let lItem = item.toLowerCase();
+
+        if (!GameEngine.player.getPlayerInventory().includes(lItem)) {
+            GameEngine.cliOutput("You don't have a "+lItem+" to use!");
+        }
+
+        if (itemObjects[lItem].inUse) {
+            GameEngine.cliOutput("The item is already in use. Putting item away.");
+            itemObjects[lItem].inUse = false;
+            GameEngine.lookAction();
+        } else {
+            if ( lItem == "egg") {
+                GameEngine.cliOutput("<strong>"+itemObjects[lItem].openDesc+"</strong>");
+                if ( GameEngine.getCurrentRoom() == "tree") {
+                    GameEngine.goAction("back");
+                    return;
+                }
+            } else {
+                GameEngine.cliOutput("<strong>"+itemObjects[lItem].useDesc+"</strong>");
+            }
+            itemObjects[lItem].inUse = true;
+            GameEngine.lookAction();
+        }
 
     },
 

@@ -21,8 +21,7 @@ GameEngine = {
         "CLOSE", "INVENTORY", "BAG", "ZYZZY", "HELP",
         "USE", "NORTH", "EAST", "SOUTH", "WEST", "MAILBOX",
         "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET",
-        "HELP", "STATE", "BRIEF", "VERBOSE", "_SHOWROOMS",
-        "_SHOWITEMS"
+        "HELP", "STATE", "BRIEF", "VERBOSE", "READ"
     ],
 
     /**
@@ -33,6 +32,7 @@ GameEngine = {
         GameEngine.startCommandListener()
         GameEngine.loadSavedGame()
         console.log('**GameEngine: Last game state:', GameEngine.gameState);
+        GameEngine.lookAction();
     },
 
     /**
@@ -92,11 +92,11 @@ GameEngine = {
     },
 
     invalidCommand: () => {
-        $('.commandline').before("Oh no, that doesn't look right!<br>");
+        GameEngine.cliOutput("Oh no, that doesn't look right!");
     },
 
     cliOutput: (output) => {
-        $('.commandLine').before(output+"<br>");
+        $('.commandLine').before(output+"<br><br>");
     },
 
     /**
@@ -184,8 +184,9 @@ GameEngine = {
             "TAKE":       GameEngine.takeAction,
             "PUSH":       GameEngine.Push,
             "PULL":       GameEngine.Pull,
-            "DROP":       GameEngine.Drop,
+            "DROP":       GameEngine.dropAction,
             "OPEN":       GameEngine.openAction,
+            "READ":       GameEngine.readAction,
             "WAIT":       GameEngine.Wait,
             "CLOSE":      GameEngine.Close,
             "INVENTORY":  GameEngine.printInventory,
@@ -228,7 +229,7 @@ GameEngine = {
 		} else {
 			GameEngine.cliOutput("Your bag contains:");
 			for(j=0;j<GameEngine.gameState.player.inventory.length;j++) {
-				GameEngine.cliOutput(GameEngine.gameState.player.inventory[j].name);
+				GameEngine.cliOutput(GameEngine.gameState.player.inventory[j]);
 			}
 		}
     },
@@ -256,7 +257,7 @@ GameEngine = {
         if( !currentRoom.roomIsDark ) {
 
 			GameEngine.cliOutput("<strong>" + currentRoom.name + "</strong>");
-			GameEngine.cliOutput(currentRoom.look + "<br>");
+			GameEngine.cliOutput(currentRoom.look);
 		
 			GameEngine.showItems(currentRoom);
 
@@ -267,7 +268,7 @@ GameEngine = {
 		} else if(currentRoom.roomIsDark && lantern.itemInUse) {
 
 			GameEngine.cliOutput("<strong>" + currentRoom.name + "</strong>");
-			GameEngine.cliOutput(currentRoom.look + "<br>");
+			GameEngine.cliOutput(currentRoom.look);
 		
 			GameEngine.showItems(currentRoom);
 
@@ -391,17 +392,59 @@ GameEngine = {
 
         if ( !currentRoom.items.includes(itemObject) ) {
             GameEngine.cliOutput("A "+lItem+" does not exist here.");
+            return;
         }
 
         if ( GameEngine.gameState.player.inventory[itemObject] ) {
             GameEngine.cliOutput("The "+lItem+" is already in your bag.");
+            return;
         }
 
         console.log(itemObject);
-        GameEngine.gameState.player.inventory.push(itemObject);
+        GameEngine.gameState.player.inventory.push(lItem);
         GameEngine.cliOutput("You put the "+lItem+" in your bag.");
         
-    }
+    },
+
+    readAction: (item) => {
+        let lItem = item.toLowerCase();
+        let itemObject = itemObjects[lItem];
+
+        if (!GameEngine.gameState.player.inventory.includes(lItem))
+        {
+            GameEngine.cliOutput("You don't own a "+lItem+ " to read.");
+            return;
+        }
+
+        if (!itemObject.actionArr.includes("read"))
+        {
+            GameEngine.cliOutput("This is not a readable item.");
+            return;
+        }
+
+        GameEngine.cliOutput(itemObject.contents);
+    },
+
+    dropAction: (item) => {
+
+        let lItem = item.toLowerCase();
+        let itemObject = itemObjects[lItem];
+
+        if (!GameEngine.gameState.player.inventory.includes(lItem))
+        {
+            GameEngine.cliOutput("You don't own a "+lItem+ " to drop.");
+            return;
+        }
+
+        let currentRoom = GameEngine.getCurrentRoom();
+        currentRoom.items.push(itemObject);
+
+        let playerInventory = GameEngine.gameState.player.inventory;
+        GameEngine.gameState.player.inventory = playerInventory.filter(e => e !== lItem);
+
+        GameEngine.cliOutput("You have dropped the "+lItem);
+
+    },
 
 }
 

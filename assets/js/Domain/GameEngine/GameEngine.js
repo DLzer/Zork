@@ -10,10 +10,12 @@ GameEngine = {
         "CLOSE", "INVENTORY", "BAG", "ZYZZY", "HELP",
         "USE", "NORTH", "EAST", "SOUTH", "WEST", "MAILBOX",
         "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET",
-        "HELP", "STATE", "BRIEF", "VERBOSE", "READ"
+        "HELP", "STATE", "BRIEF", "VERBOSE", "READ",
+        "CLIMB", "UP", "DOWN",
     ],
     openableInstances: [
-        "WINDOW", "DOOR", "TRAPDOOR", "TRAP"
+        "WINDOW", "DOOR", "TRAPDOOR", "TRAP", "TREE", "KITCHEN",
+        "CHIMNEY",
     ],
 
     /**
@@ -157,9 +159,13 @@ GameEngine = {
                 "EAST":   GameEngine.goAction,
                 "WEST":   GameEngine.goAction,
                 "BACK":   GameEngine.goAction,
+            "CLIMB":      GameEngine.goAction,
+            "UP":         GameEngine.goAction,
+            "DOWN":       GameEngine.goAction,
+            "ENTER":      GameEngine.goAction,
             "LOOK":       GameEngine.lookAction,
             "TAKE":       GameEngine.takeAction,
-            "ENTER":      GameEngine.goAction,
+            "USE":        GameEngine.useAction,
             // "PUSH":       GameEngine.Push,
             // "PULL":       GameEngine.Pull,
             "DROP":       GameEngine.dropAction,
@@ -177,7 +183,7 @@ GameEngine = {
             "VERBOSE":    GameEngine.setVerboseOutput,
         }
  
-        if ( ["NORTH", "SOUTH", "EAST", "WEST", "BACK"].includes(cmd) ) {
+        if ( ["NORTH", "SOUTH", "EAST", "WEST", "BACK", "CLIMB", "ENTER", "UP", "DOWN"].includes(cmd) ) {
             verbMap[ cmd ]( cmd );
         } else {
             verbMap[ cmd ]( arg );
@@ -334,6 +340,11 @@ GameEngine = {
 
     openAction: (direction) => {
 
+        if ( direction == "EGG" ) {
+            GameEngine.useAction("EGG");
+            return;
+        }
+
         let currentRoom = GameEngine.getCurrentRoom();
 
         if (roomList[currentRoom]["open"] === undefined || !roomList[currentRoom]["open"]) 
@@ -422,6 +433,38 @@ GameEngine = {
 
         GameEngine.player.removeFromInventory(lItem);
         GameEngine.cliOutput("You have dropped the "+lItem);
+
+    },
+
+    useAction: (item) => {
+
+        if ( !item ) {
+            GameEngine.cliOutput("Use what?");
+        }
+
+        let lItem = item.toLowerCase();
+
+        if (!GameEngine.player.getPlayerInventory().includes(lItem)) {
+            GameEngine.cliOutput("You don't have a "+lItem+" to use!");
+        }
+
+        if (itemObjects[lItem].inUse) {
+            GameEngine.cliOutput("The item is already in use. Putting item away.");
+            itemObjects[lItem].inUse = false;
+            GameEngine.lookAction();
+        } else {
+            if ( lItem == "egg") {
+                GameEngine.cliOutput("<strong>"+itemObjects[lItem].openDesc+"</strong>");
+                if ( GameEngine.getCurrentRoom() == "tree") {
+                    GameEngine.goAction("back");
+                    return;
+                }
+            } else {
+                GameEngine.cliOutput("<strong>"+itemObjects[lItem].useDesc+"</strong>");
+            }
+            itemObjects[lItem].inUse = true;
+            GameEngine.lookAction();
+        }
 
     },
 

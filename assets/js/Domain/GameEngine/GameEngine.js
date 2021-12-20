@@ -115,8 +115,9 @@ GameEngine = {
         else 
         {
             GameEngine.player = new Player(
-                [], 0, westOfHouse, null, false, false
+                [], 0, null, null, false, false
             );
+            GameEngine.player.setCurrentLocation(westOfHouse);
         }
     },
 
@@ -198,7 +199,7 @@ GameEngine = {
 		} else {
 			GameEngine.cliOutput("Your bag contains:");
 			for(j=0;j<inventory.length;j++) {
-				GameEngine.cliOutput(GameEngine.gameState.player.inventory[j]);
+				GameEngine.cliOutput(GameEngine.player.inventory[j]);
 			}
 		}
     },
@@ -381,7 +382,7 @@ GameEngine = {
             return;
         }
 
-        if (!itemObject.actionArr.includes("read"))
+        if (!itemObject.actionArray.includes("read"))
         {
             GameEngine.cliOutput("This is not a readable item.");
             return;
@@ -411,6 +412,6 @@ GameEngine = {
 
 }
 
-$(document).ready(function() {
+$(window).on('load', function() {
     GameEngine.init();
 })

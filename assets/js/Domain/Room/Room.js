@@ -12,7 +12,7 @@
      * @param {array}   items The list of Items in the room
      * @param {bool}    isDark Is the room dark
      */
-    constructor(varName, name, look, items, isDark)
+    constructor(varName, name, look, items, isDark = false)
     {
         this.varName    = varName;
         this.name       = name;
@@ -92,177 +92,144 @@
     }
  }
 
-// North of House
-var northOfHouse = new Room("northOfHouse","North of House", "You are facing the north side of a white house. There is no door here,<br /> and all the windows are boarded up. To the north a narrow path winds through the trees.", [], false);
-
-// Forest Path
-var forestPath =  new Room("forestPath","Forest Path", "This is a path winding through a dimly lit forest. The path heads north-south here.<br /> One particulary large tree with some low branches stands at the edge of the path.", [], false);
-
-// Forest ( 1 ) 
-var forest_one = new Room("forest_one", "Forest", "This is a dimly lit forest, with large trees all around", [], false);
-
-// Forest ( 2 ) 
-var forest_two = new Room("forest_two","Forest", "This is a forest, with trees in all directions.<br />To the east, there appears to be light.", [], false);
-
-// Forest ( 3 ) 
-var forest_three = new Room("forest_three","Forest", "This is a dimly lit forest, with large trees all around.", [], false);
-
-// Forest ( 4 ) 
-var forest_four = new Room("forest_four","Forest", "The forest thins out, revealing impassable mountains.", [], false);
-
-
-//Storm Tossed Impass
-var stormTossed = new Room("stormTossed","Forest", "Storm-tossed trees block your way.", [], false);
-
-// South of House
-var southOfHouse = new Room("southOfHouse","South of House", "You are facing the south side of a white house.<br /> There is no door here, and all the windows are boarded", [], false);
-
-// West of House
-var westOfHouse = new Room("westOfHouse","West of House", "This is an open field west of a white house, with a boarded front door.<br />There is a small mailbox here.", [mat], false);
-westOfHouse.visited = true;
-
-// Behind House
-var behindHouse = new Room("behindHouse","Behind House", "You are behind the white house. A path leads into the forest to the east. <br />In one corner of the house there is a small window which is slightly ajar.",[], false);
-
-// Window Behind House
-var windowBehindHouse = new Room("windowBehindHouse","Behind House", "You are behind the white house. A path leads into the forest to the east. <br />In one corner of the house there is a small window which is open.",[], false);
-
-// Kitchen
-var kitchen = new Room("kitchen","Kitchen", "You are in the kitchen of a the white house. A table seems to have been used recently for the<br />preparation of food. A passage leads to the west and a dark staircase can be seen leading upward.<br /> A dark chimney leads down and to the east is a small window which is open.<br />",[sack, bottle], false);
-
-// Mailbox
-var mailbox = new Room("mailbox", "Mailbox", "Opening the mailbox reveals a leaflet.",[leaflet]);
-
-// Tree
-var tree = new Room("tree", "Up A Tree", "You are about 10 feet above the ground nestled among some large branches.<br />The nearest branch above you is out of reach. Besides you on the branch is a small birds nest.", [egg], false);
-
-// North clearing
-var northClearing = new Room("northClearing", "Clearing", "You are in a clearing, with a forest surrounding you on all sides. A path leads south.", [leaves], false);
-
-// East clearing
-var eastClearing = new Room("eastClearing", "Clearing", "You are in a small clearing in a well marked forest path that extends to the east and west.", [], false);
-
-// Canyon View
-var canyonView = new Room("canyonView", "Canyon View", "You are at the top of the Great Canyon on its west wall.<br />From here there is a marvelous view of the canyon and parts of the Frigid River upstream. Across the canyon, the walls of the White Cliffs join the mighty ramparts of the Flathead Mountains to the east.<br /> Following the Canyon upstream to the north, Aragain Falls may be seen, complete with rainbow.<br /> The mighty Frigid River flows out from a great dark cavern. To the west and south can be seen an immense forest, stretching for miles around. A path leads northwest.<br > It is possible to climb down into the canyon from here.", [], false);
-
-// East clearing
-var rockyLedge = new Room("rockyLedge", "Rocky Ledge", "You are on a ledge about halfway up the wall of the river canyon.<br />You can see from here that the main flow from Aragain Falls twists along a passage which it is impossible for you to enter.<br />Below you is the canyon bottom. Above you is more cliff, which appears climbable.", [], false);
-
-// canyonBottom
-var canyonBottom = new Room("canyonBottom", "Canyon Bottom", "You are beneath the walls of the river canyon which may be climbable here.<br />The lesser part of the runoff of Aragain Falls flows by below. To the north is a narrow path.", [], false);
-
-// canyonBottom
-var endOfRainbow = new Room("endOfRainbow", "End of Rainbow", "You are on a small, rocky beach on the continuation of the Frigid River past the Falls.<br /> The beach is narrow due to the presence of the White Cliffs. The river canyon opens here and sunlight shines in from above.<br />A rainbow crosses over the falls to the east and a narrow path continues to the southwest.", [], false);
-
-// Chimney
-var chimney = new Room("chimney", "Chimney", "You are in a small cold chimney, on the wall reads 'Santa was here'.",[], true);
-
-// Living Room
-var livingRoom = new Room("livingRoom", "Living Room", "You are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the room.",[sword, lantern], false);
-
-// Living Room
-var livingRoomRugMoved = new Room("livingRoomRugMoved", "Living Room", "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",[sword, lantern], false);
-
-// living Room Trap Door
-var livingRoomTrapDoor = new Room("livingRoomTrapDoor", "Trap Door", "The door reluctantly opens to reveal a rickety staircase descending into darkness.",[], false);
-
-// Cellar
-var cellar = new Room("cellar", "Cellar", "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.",[], true);
-
-
+var roomList = {
+    "northOfHouse": new Room("northOfHouse","North of House", "You are facing the north side of a white house. There is no door here,<br /> and all the windows are boarded up. To the north a narrow path winds through the trees.", [], false),
+    "forestPath":  new Room("forestPath","Forest Path", "This is a path winding through a dimly lit forest. The path heads north-south here.<br /> One particulary large tree with some low branches stands at the edge of the path.", [], false),
+    "forest_one": new Room("forest_one", "Forest", "This is a dimly lit forest, with large trees all around", [], false),
+    "forest_two": new Room("forest_two","Forest", "This is a forest, with trees in all directions.<br />To the east, there appears to be light.", [], false),
+    "forest_three": new Room("forest_three","Forest", "This is a dimly lit forest, with large trees all around.", [], false),
+    "forest_four": new Room("forest_four","Forest", "The forest thins out, revealing impassable mountains.", [], false),
+    "stormTossed": new Room("stormTossed","Forest", "Storm-tossed trees block your way.", [], false),
+    "southOfHouse": new Room("southOfHouse","South of House", "You are facing the south side of a white house.<br /> There is no door here, and all the windows are boarded", [], false),
+    "westOfHouse": new Room("westOfHouse","West of House", "This is an open field west of a white house, with a boarded front door.<br />There is a small mailbox here.", [mat], false),
+    "behindHouse": new Room("behindHouse","Behind House", "You are behind the white house. A path leads into the forest to the east. <br />In one corner of the house there is a small window which is slightly ajar.",[], false),
+    "windowBehindHouse": new Room("windowBehindHouse","Behind House", "You are behind the white house. A path leads into the forest to the east. <br />In one corner of the house there is a small window which is open.",[], false),
+    "kitchen": new Room("kitchen","Kitchen", "You are in the kitchen of a the white house. A table seems to have been used recently for the<br />preparation of food. A passage leads to the west and a dark staircase can be seen leading upward.<br /> A dark chimney leads down and to the east is a small window which is open.<br />",[sack, bottle], false),
+    "mailbox": new Room("mailbox", "Mailbox", "Opening the mailbox reveals a leaflet.",[leaflet]),
+    "tree": new Room("tree", "Up A Tree", "You are about 10 feet above the ground nestled among some large branches.<br />The nearest branch above you is out of reach. Besides you on the branch is a small birds nest.", [egg], false),
+    "northClearing": new Room("northClearing", "Clearing", "You are in a clearing, with a forest surrounding you on all sides. A path leads south.", [leaves], false),
+    "eastClearing": new Room("eastClearing", "Clearing", "You are in a small clearing in a well marked forest path that extends to the east and west.", [], false),
+    "canyonView": new Room("canyonView", "Canyon View", "You are at the top of the Great Canyon on its west wall.<br />From here there is a marvelous view of the canyon and parts of the Frigid River upstream. Across the canyon, the walls of the White Cliffs join the mighty ramparts of the Flathead Mountains to the east.<br /> Following the Canyon upstream to the north, Aragain Falls may be seen, complete with rainbow.<br /> The mighty Frigid River flows out from a great dark cavern. To the west and south can be seen an immense forest, stretching for miles around. A path leads northwest.<br > It is possible to climb down into the canyon from here.", [], false),
+    "rockyLedge": new Room("rockyLedge", "Rocky Ledge", "You are on a ledge about halfway up the wall of the river canyon.<br />You can see from here that the main flow from Aragain Falls twists along a passage which it is impossible for you to enter.<br />Below you is the canyon bottom. Above you is more cliff, which appears climbable.", [], false),
+    "canyonBottom": new Room("canyonBottom", "Canyon Bottom", "You are beneath the walls of the river canyon which may be climbable here.<br />The lesser part of the runoff of Aragain Falls flows by below. To the north is a narrow path.", [], false),
+    "endOfRainbow": new Room("endOfRainbow", "End of Rainbow", "You are on a small, rocky beach on the continuation of the Frigid River past the Falls.<br /> The beach is narrow due to the presence of the White Cliffs. The river canyon opens here and sunlight shines in from above.<br />A rainbow crosses over the falls to the east and a narrow path continues to the southwest.", [], false),
+    "chimney": new Room("chimney", "Chimney", "You are in a small cold chimney, on the wall reads 'Santa was here'.",[], true),
+    "livingRoom": new Room("livingRoom", "Living Room", "You are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the room.",[sword, lantern], false),
+    "livingRoomRugMoved": new Room("livingRoomRugMoved", "Living Room", "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",[sword, lantern], false),
+    "livingRoomTrapDoor": new Room("livingRoomTrapDoor", "Trap Door", "The door reluctantly opens to reveal a rickety staircase descending into darkness.",[], false),
+    "cellar": new Room("cellar", "Cellar", "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.",[], true),
+    "southOfHouse": new Room("southOfHouse","South of House", "You are facing the south side of a white house.<br /> There is no door here, and all the windows are boarded", [], false),
+    "behindHouse": new Room("behindHouse","Behind House", "You are behind the white house. A path leads into the forest to the east. <br />In one corner of the house there is a small window which is slightly ajar.",[], false),
+    "windowBehindHouse": new Room("windowBehindHouse","Behind House", "You are behind the white house. A path leads into the forest to the east. <br />In one corner of the house there is a small window which is open.",[], false),
+    "kitchen": new Room("kitchen","Kitchen", "You are in the kitchen of a the white house. A table seems to have been used recently for the<br />preparation of food. A passage leads to the west and a dark staircase can be seen leading upward.<br /> A dark chimney leads down and to the east is a small window which is open.<br />",[sack, bottle], false),
+    "mailbox": new Room("mailbox", "Mailbox", "Opening the mailbox reveals a leaflet.",[leaflet]),
+    "tree": new Room("tree", "Up A Tree", "You are about 10 feet above the ground nestled among some large branches.<br />The nearest branch above you is out of reach. Besides you on the branch is a small birds nest.", [egg], false),
+    "northClearing": new Room("northClearing", "Clearing", "You are in a clearing, with a forest surrounding you on all sides. A path leads south.", [leaves], false),
+    "eastClearing": new Room("eastClearing", "Clearing", "You are in a small clearing in a well marked forest path that extends to the east and west.", [], false),
+    "canyonView": new Room("canyonView", "Canyon View", "You are at the top of the Great Canyon on its west wall.<br />From here there is a marvelous view of the canyon and parts of the Frigid River upstream. Across the canyon, the walls of the White Cliffs join the mighty ramparts of the Flathead Mountains to the east.<br /> Following the Canyon upstream to the north, Aragain Falls may be seen, complete with rainbow.<br /> The mighty Frigid River flows out from a great dark cavern. To the west and south can be seen an immense forest, stretching for miles around. A path leads northwest.<br > It is possible to climb down into the canyon from here.", [], false),
+    "rockyLedge": new Room("rockyLedge", "Rocky Ledge", "You are on a ledge about halfway up the wall of the river canyon.<br />You can see from here that the main flow from Aragain Falls twists along a passage which it is impossible for you to enter.<br />Below you is the canyon bottom. Above you is more cliff, which appears climbable.", [], false),
+    "canyonBottom": new Room("canyonBottom", "Canyon Bottom", "You are beneath the walls of the river canyon which may be climbable here.<br />The lesser part of the runoff of Aragain Falls flows by below. To the north is a narrow path.", [], false),
+    "endOfRainbow": new Room("endOfRainbow", "End of Rainbow", "You are on a small, rocky beach on the continuation of the Frigid River past the Falls.<br /> The beach is narrow due to the presence of the White Cliffs. The river canyon opens here and sunlight shines in from above.<br />A rainbow crosses over the falls to the east and a narrow path continues to the southwest.", [], false),
+    "chimney": new Room("chimney", "Chimney", "You are in a small cold chimney, on the wall reads 'Santa was here'.",[], true),
+    "livingRoom": new Room("livingRoom", "Living Room", "You are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the room.",[sword, lantern], false),
+    "livingRoomRugMoved": new Room("livingRoomRugMoved", "Living Room", "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",[sword, lantern], false),
+    "livingRoomTrapDoor": new Room("livingRoomTrapDoor", "Trap Door", "The door reluctantly opens to reveal a rickety staircase descending into darkness.",[], false),
+    "cellar": new Room("cellar", "Cellar", "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.",[], true),
+}
+roomList.westOfHouse.visited = true;
 // Forest One
-forest_one.addExit("south", stormTossed);
-forest_one.addExit("north", southOfHouse);
+roomList.forest_one.addExit("south", roomList.stormTossed);
+roomList.forest_one.addExit("north", roomList.southOfHouse);
 // Storm Tossed Forest
-stormTossed.addExit("north", forest_one);
+roomList.stormTossed.addExit("north", roomList.forest_one);
 // North of House
-northOfHouse.addExit("east", behindHouse);
-northOfHouse.addExit("south", southOfHouse);
-northOfHouse.addExit("north", forestPath);
-northOfHouse.addExit("west", westOfHouse);
+roomList.northOfHouse.addExit("east", roomList.behindHouse);
+roomList.northOfHouse.addExit("south", roomList.southOfHouse);
+roomList.northOfHouse.addExit("north", roomList.forestPath);
+roomList.northOfHouse.addExit("west", roomList.westOfHouse);
 //Forest Path
-forestPath.addExit("south", northOfHouse);
-forestPath.addExit("climb", tree);
-forestPath.addExit("up", tree);
-forestPath.addExit("north", northClearing);
+roomList.forestPath.addExit("south", roomList.northOfHouse);
+roomList.forestPath.addExit("climb", roomList.tree);
+roomList.forestPath.addExit("up", roomList.tree);
+roomList.forestPath.addExit("north", roomList.northClearing);
 // North Clearing
-northClearing.addExit("west", forest_two);
-northClearing.addExit("east", forest_three);
-northClearing.addExit("south", forestPath);
+roomList.northClearing.addExit("west", roomList.forest_two);
+roomList.northClearing.addExit("east", roomList.forest_three);
+roomList.northClearing.addExit("south", roomList.forestPath);
 // Forest ( 2 )
-forest_two.addExit("east", forestPath);
-forest_two.addExit("north", northClearing);
-forest_two.addExit("south", westOfHouse);
+roomList.forest_two.addExit("east", roomList.forestPath);
+roomList.forest_two.addExit("north", roomList.northClearing);
+roomList.forest_two.addExit("south", roomList.westOfHouse);
 // Forest ( 3 )
-forest_three.addExit('west', forestPath);
-forest_three.addExit('east', forest_four);
+roomList.forest_three.addExit('west', roomList.forestPath);
+roomList.forest_three.addExit('east', roomList.forest_four);
 // Forest ( 4 )
-forest_four.addExit('west', forestPath);
+roomList.forest_four.addExit('west', roomList.forestPath);
 // Tree
-tree.addExit("climb",forestPath);
-tree.addExit("down",forestPath);
-tree.addExit("south",northOfHouse);
+roomList.tree.addExit("climb",roomList.forestPath);
+roomList.tree.addExit("down",roomList.forestPath);
+roomList.tree.addExit("south",roomList.northOfHouse);
 // South of House
-southOfHouse.addExit("north", westOfHouse);
-southOfHouse.addExit("south", forest_one);
-southOfHouse.addExit("east", behindHouse);
-southOfHouse.addExit("west", westOfHouse);
+roomList.southOfHouse.addExit("north", roomList.westOfHouse);
+roomList.southOfHouse.addExit("south", roomList.forest_one);
+roomList.southOfHouse.addExit("east", roomList.behindHouse);
+roomList.southOfHouse.addExit("west", roomList.westOfHouse);
 // West of House
-westOfHouse.addExit("north", northOfHouse);
-westOfHouse.addExit("south", southOfHouse);
-westOfHouse.addExit("east", behindHouse);
-westOfHouse.addExit("west", forest_two);
-westOfHouse.addExit("open", mailbox)
+roomList.westOfHouse.addExit("north", roomList.northOfHouse);
+roomList.westOfHouse.addExit("south", roomList.southOfHouse);
+roomList.westOfHouse.addExit("east", roomList.behindHouse);
+roomList.westOfHouse.addExit("west", roomList.forest_two);
+roomList.westOfHouse.addExit("open", roomList.mailbox)
 // Mailbox
-mailbox.addExit("north", northOfHouse);
-mailbox.addExit("south", southOfHouse);
-mailbox.addExit("east", behindHouse);
-mailbox.addExit("west", forest_two);
+roomList.mailbox.addExit("north", roomList.northOfHouse);
+roomList.mailbox.addExit("south", roomList.southOfHouse);
+roomList.mailbox.addExit("east", roomList.behindHouse);
+roomList.mailbox.addExit("west", roomList.forest_two);
 //Behind House
-behindHouse.addExit("open", windowBehindHouse);
-behindHouse.addExit("south", southOfHouse);
-behindHouse.addExit("west", westOfHouse);
-behindHouse.addExit("east", eastClearing);
-behindHouse.addExit("north", northOfHouse);
+roomList.behindHouse.addExit("open", roomList.windowBehindHouse);
+roomList.behindHouse.addExit("south", roomList.southOfHouse);
+roomList.behindHouse.addExit("west", roomList.westOfHouse);
+roomList.behindHouse.addExit("east", roomList.eastClearing);
+roomList.behindHouse.addExit("north", roomList.northOfHouse);
 // East Clearing
-eastClearing.addExit("west", behindHouse);
-eastClearing.addExit("east", canyonView);
+roomList.eastClearing.addExit("west", roomList.behindHouse);
+roomList.eastClearing.addExit("east", roomList.canyonView);
 // Canyon View
-canyonView.addExit("west", eastClearing);
-canyonView.addExit("east", rockyLedge);
-canyonView.addExit("climb", rockyLedge);
-canyonView.addExit("down", rockyLedge);
+roomList.canyonView.addExit("west", roomList.eastClearing);
+roomList.canyonView.addExit("east", roomList.rockyLedge);
+roomList.canyonView.addExit("climb", roomList.rockyLedge);
+roomList.canyonView.addExit("down", roomList.rockyLedge);
 // Rocky Ledge
-rockyLedge.addExit("west", canyonView);
-rockyLedge.addExit("up", canyonView);
-rockyLedge.addExit("down", canyonBottom);
-rockyLedge.addExit("climb", canyonBottom);
+roomList.rockyLedge.addExit("west", roomList.canyonView);
+roomList.rockyLedge.addExit("up", roomList.canyonView);
+roomList.rockyLedge.addExit("down", roomList.canyonBottom);
+roomList.rockyLedge.addExit("climb", roomList.canyonBottom);
 // Canyon Bottom
-canyonBottom.addExit("up", rockyLedge);
-canyonBottom.addExit("climb", rockyLedge);
-canyonBottom.addExit("north", endOfRainbow);
+roomList.canyonBottom.addExit("up", roomList.rockyLedge);
+roomList.canyonBottom.addExit("climb", roomList.rockyLedge);
+roomList.canyonBottom.addExit("north", roomList.endOfRainbow);
 //End of Rainbow
-endOfRainbow.addExit("south", canyonBottom);
+roomList.endOfRainbow.addExit("south", roomList.canyonBottom);
 //Window Behind House
-windowBehindHouse.addExit("enter", kitchen);
-windowBehindHouse.addExit("east", eastClearing);
-windowBehindHouse.addExit("west", westOfHouse);
-windowBehindHouse.addExit("north", northOfHouse);
-windowBehindHouse.addExit("south", southOfHouse);
+roomList.windowBehindHouse.addExit("enter", roomList.kitchen);
+roomList.windowBehindHouse.addExit("east", roomList.eastClearing);
+roomList.windowBehindHouse.addExit("west", roomList.westOfHouse);
+roomList.windowBehindHouse.addExit("north", roomList.northOfHouse);
+roomList.windowBehindHouse.addExit("south", roomList.southOfHouse);
 // Kitchen
-kitchen.addExit("exit", behindHouse);
-kitchen.addExit("up", chimney);
-kitchen.addExit("west", livingRoom);
+roomList.kitchen.addExit("exit", roomList.behindHouse);
+roomList.kitchen.addExit("up", roomList.chimney);
+roomList.kitchen.addExit("west", roomList.livingRoom);
 // Chimney
-chimney.addExit("down", kitchen);
+roomList.chimney.addExit("down", roomList.kitchen);
 // Living Room
-livingRoom.addExit("east", kitchen);
-livingRoom.addExit("move", livingRoomRugMoved);
+roomList.livingRoom.addExit("east", roomList.kitchen);
+roomList.livingRoom.addExit("move", roomList.livingRoomRugMoved);
 // Living Room rug moved
-livingRoomRugMoved.addExit("east", kitchen);
-livingRoomRugMoved.addExit("open", livingRoomTrapDoor);
+roomList.livingRoomRugMoved.addExit("east", roomList.kitchen);
+roomList.livingRoomRugMoved.addExit("open", roomList.livingRoomTrapDoor);
 // Living Room Trap Door
-livingRoomTrapDoor.addExit("down", cellar);
-livingRoomTrapDoor.addExit("east", kitchen);
+roomList.livingRoomTrapDoor.addExit("down", roomList.cellar);
+roomList.livingRoomTrapDoor.addExit("east", roomList.kitchen);
 // Cellar
-cellar.addExit("up", livingRoom);
+roomList.cellar.addExit("up", roomList.livingRoom);

@@ -2,23 +2,27 @@ GameEngine = {
     
     gameState: {
         player: {
-            roomId: 0,
+            room: westOfHouse,
             inventory: [],
-            score: 0
+            score: 0,
+            previousRoom: null
         },
         saved: false,
         moves: 0,
+        verbose: false,
     },
 
     outputElement:  $('.commandline'),
     verbose:        false,
     roomView:       $('.room'),
     allowedVerbs: [
-        "GO", "LOOK", "TAKE", "PUSH",
+        "GO", "LOOK", "TAKE", "PUSH", "BACK",
         "PULL", "DROP", "OPEN", "WAIT",
-        "CLOSE", "INVENTORY", "ZYZZY", "HELP",
-        "USE", "NORTH", "EAST", "SOUTH", "WEST",
-        "UP", "DOWN", "LEFT", "RIGHT"
+        "CLOSE", "INVENTORY", "BAG", "ZYZZY", "HELP",
+        "USE", "NORTH", "EAST", "SOUTH", "WEST", "MAILBOX",
+        "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET",
+        "HELP", "STATE", "BRIEF", "VERBOSE", "_SHOWROOMS",
+        "_SHOWITEMS"
     ],
 
     /**
@@ -28,6 +32,7 @@ GameEngine = {
         console.log('**INITIALIZING GAME ENGINE**')
         GameEngine.startCommandListener()
         GameEngine.loadSavedGame()
+        console.log('**GameEngine: Last game state:', GameEngine.gameState);
     },
 
     /**
@@ -59,12 +64,17 @@ GameEngine = {
             if ( !GameEngine.validateCommand(cmd[i]) ) {
                 GameEngine.invalidCommand();
                 $('input').val('');
-                break;
+                return;
             }
         }
         // Command is valid
         $('input').val('');
-        console.log(cmd);
+
+        executableCommand = cmd[0];
+        commandArgument   = (cmd[1]) ? cmd[1] : null;
+        console.log("**Game Engine: Command raw input:",cmd);
+        console.log("**Game Engine: Command executables:", [executableCommand, commandArgument]);
+        GameEngine.executeCommand(executableCommand, commandArgument);
     },
 
     /**
@@ -75,7 +85,7 @@ GameEngine = {
      * @returns {bool}
      */
     validateCommand: (cmd) => {
-        if ( GameEngine.allowedVerbs.includes(cmd)) {
+        if ( GameEngine.allowedVerbs.includes(cmd) || itemArray.includes(cmd.toLocaleLowerCase())) {
             return true;
         }
         return false;
@@ -85,15 +95,19 @@ GameEngine = {
         $('.commandline').before("Oh no, that doesn't look right!<br>");
     },
 
+    cliOutput: (output) => {
+        $('.commandLine').before(output+"<br>");
+    },
+
     /**
      * Set the values of the game state
      */
-    setGameState: (roomId, inventory, score, saved, moves) => {
-        GameEngine.player.roomId    = roomId;
-        GameEngine.player.inventory = inventory;
-        GameEngine.player.score     = score;
-        GameEngine.saved            = saved;
-        GameEngine.moves            = moves;
+    setGameState: (room, inventory, score, saved, moves) => {
+        GameEngine.gameState.player.room      = room;
+        GameEngine.gameState.player.inventory = inventory;
+        GameEngine.gameState.player.score     = score;
+        GameEngine.gameState.saved            = saved;
+        GameEngine.gameState.moves            = moves;
     },
 
     /**
@@ -103,7 +117,7 @@ GameEngine = {
         if(localStorage.getItem('zorkSaveGame')) {
             savedGame = JSON.parse(localStorage.getItem('zorkSaveGameState'));
             GameEngine.setGameState(
-                savedGame.player.roomId,
+                savedGame.player.room,
                 savedGame.player.inventory,
                 savedGame.player.score,
                 savedGame.saved,
@@ -116,14 +130,23 @@ GameEngine = {
      * Save a current gameState object
      */
     saveGame: () => {
+        GameEngine.gameState.saved = true;
         localStorage.setItem('zorkSaveGameState', GameEngine.gameState);
+        GameEngine.cliOutput("Your game state has been saved.");
+        console.log("**GameEngine: Game state saved");
     },
 
     /**
      * Reset a gameState object
      */
     resetGame: () => {
-        GameEngine.setGameState(0,[],0,false,0)
+        GameEngine.setGameState(westOfHouse,[],0,false,0);
+        GameEngine.cliOutput("Your game state has been reset.");
+        console.log("**GameEngine: Game state reset");
+    },
+
+    printState: () => {
+        console.log("**GameEngine: Current game state", GameEngine.gameState);
     },
 
     /**
@@ -156,18 +179,24 @@ GameEngine = {
     executeCommand: (cmd, arg = null) => {
 
         var verbMap = {
-            "GO":         GameEngine.Go,
-            "LOOK":       GameEngine.Look,
-            "TAKE":       GameEngine.Take,
+            "GO":         GameEngine.goAction,
+            "LOOK":       GameEngine.lookAction,
+            "TAKE":       GameEngine.takeAction,
             "PUSH":       GameEngine.Push,
             "PULL":       GameEngine.Pull,
             "DROP":       GameEngine.Drop,
-            "OPEN":       GameEngine.Open,
+            "OPEN":       GameEngine.openAction,
             "WAIT":       GameEngine.Wait,
             "CLOSE":      GameEngine.Close,
-            "INVENTORY":  GameEngine.Inventory,
+            "INVENTORY":  GameEngine.printInventory,
+            "BAG":        GameEngine.printInventory,
             "XYZZY":      function() { return true; },
-            "HELP":       GameEngine.Help
+            "HELP":       GameEngine.printHelp,
+            "SAVE":       GameEngine.saveGame,
+            "RESET":      GameEngine.resetGame,
+            "STATE":      GameEngine.printState,
+            "BRIEF":      GameEngine.setBriefOutput,
+            "VERBOSE":    GameEngine.setVerboseOutput,
         }
  
         verbMap[ cmd ]( arg );
@@ -182,6 +211,197 @@ GameEngine = {
 		// objDiv.scrollTop = objDiv.scrollHeight;
 		$('#content-inner').scrollTop(10000);
     },
+
+    /********* CORE COMMANDS *********/
+
+    // Outputs a help dialog to the player
+    printHelp: () => {
+        GameEngine.cliOutput("Here is a list of acceptable commands:");
+        var acceptedCommands = ['> go [direction]', '> north', '> east', '> south', '> west', '> up', '> down', '> look', '> open', '> enter', '> exit','> climb', '> brief [ short descriptions ]', '> verbose [ long descriptions ]', '> help', '> take', '> bag', '> save [ Save current game]', '> reset [ Reset game including save ]'];
+        for(i = 0; i < acceptedCommands.length; i++) {
+            GameEngine.cliOutput(acceptedCommands[i]);
+        }
+    },
+    printInventory: () => {
+        if(GameEngine.gameState.player.inventory === undefined || GameEngine.gameState.player.inventory == 0) {
+			GameEngine.cliOutput("There is nothing in your bag!");
+		} else {
+			GameEngine.cliOutput("Your bag contains:");
+			for(j=0;j<GameEngine.gameState.player.inventory.length;j++) {
+				GameEngine.cliOutput(GameEngine.gameState.player.inventory[j].name);
+			}
+		}
+    },
+    // Sets the output of items and rooms to verbose mode
+    setVerboseOutput: () => {
+        GameEngine.gameState.verbose = true;
+        GameEngine.cliOutput("ZORK is now in its \"verbose\" mode, which always gives long descriptions of locations (even if you've been there before).");
+    },
+    // Sets the output of items and rooms to brief mode
+    setBriefOutput: () => {
+        GameEngine.gameState.verbose = false;
+        GameEngine.cliOutput("ZORK is now in its normal \"brief\" printing mode, which gives long descriptions of places never before visited, and short descriptions otherwise.");
+    },
+
+    getCurrentRoom: () => {
+        return GameEngine.gameState.player.room;
+    },
+
+    /********* DIRECTIONAL COMMANDS *********/
+
+    lookAction: () => {
+
+        let currentRoom = GameEngine.getCurrentRoom();
+
+        if( !currentRoom.roomIsDark ) {
+
+			GameEngine.cliOutput("<strong>" + currentRoom.name + "</strong>");
+			GameEngine.cliOutput(currentRoom.look + "<br>");
+		
+			GameEngine.showItems(currentRoom);
+
+		} else if(currentRoom.roomIsDark && !lantern.itemInUse) {
+
+			GameEngine.cliOutput("<strong>" + currentRoom.darkText + "</strong>");
+
+		} else if(currentRoom.roomIsDark && lantern.itemInUse) {
+
+			GameEngine.cliOutput("<strong>" + currentRoom.name + "</strong>");
+			GameEngine.cliOutput(currentRoom.look + "<br>");
+		
+			GameEngine.showItems(currentRoom);
+
+		}
+    },
+
+    showItems: (room) => {
+
+        let itemlist = [];
+	
+		for (var i = 0; i < room.items.length; i++) {
+			if (room.items[i].specialdesc) {
+				GameEngine.cliOutput(room.items[i].specialdesc + "<br>");
+			}
+			else {
+				itemlist.push(room.items[i].desc);
+			}
+		}
+	
+		if (itemlist.length === 1) {
+			GameEngine.cliOutput("There is a " + itemlist[0]);
+		}
+		else if (itemlist.length > 1) {
+			var str = "";
+			for (var i = 0; i < itemlist.length; i++) {
+				if (!itemlist[i + 1]) {
+					str.concat(itemlist[i]);
+				}
+				else {
+					str.concat(itemlist[i] + ", ");
+				}
+			}
+			GameEngine.cliOutput("There is a " + str + " here.");
+		}
+    },
+
+    goAction: (direction) => {
+
+        let currentRoom = GameEngine.getCurrentRoom();
+        let lDirection = direction.toLowerCase();
+
+        if (lDirection === undefined) 
+        {
+            output.before("You can't go that way.");
+        }
+        else 
+        {
+
+            if ( lDirection == "back" ) {
+                console.log("**GameEngine: Moving "+lDirection);
+                console.log("**GameEngine: New Room - ", GameEngine.gameState.player.previousRoom);
+                GameEngine.gameState.player.room = GameEngine.gameState.player.previousRoom;
+                GameEngine.gameState.player.previousRoom = currentRoom;
+                currentRoom = GameEngine.gameState.player.room;
+            } else {
+                console.log("**GameEngine: Moving "+lDirection);
+                console.log("**GameEngine: New Room - ", currentRoom[lDirection]);
+                GameEngine.gameState.player.previousRoom = currentRoom;
+                GameEngine.gameState.player.room = currentRoom[lDirection];
+                currentRoom = GameEngine.gameState.player.room;
+            }
+
+            if (GameEngine.gameState.verbose){
+                if (currentRoom.visited) {
+                    GameEngine.cliOutput("<strong>" + currentRoom.name + "</strong>");
+                    GameEngine.showItems(currentRoom);
+                }
+                else {
+                    GameEngine.lookAction();
+                    currentRoom.visited = true;
+                }
+            }
+
+            else {
+                GameEngine.lookAction();
+                currentRoom.visited = true;
+            }
+        }
+    },
+
+    openAction: (direction) => {
+
+        let currentRoom = GameEngine.getCurrentRoom();
+
+        if (currentRoom["open"] === undefined || !currentRoom["open"]) 
+        {
+            output.before("You can't open that.");
+        }
+        else 
+        {
+
+        console.log("**GameEngine: Opening");
+        console.log("**GameEngine: New Room - ", currentRoom["open"]);
+        GameEngine.gameState.player.previousRoom = currentRoom;
+        GameEngine.gameState.player.room = currentRoom["open"];
+        currentRoom = GameEngine.gameState.player.room;
+
+            if (GameEngine.gameState.verbose){
+                if (currentRoom.visited) {
+                    GameEngine.cliOutput("<strong>" + currentRoom.name + "</strong>");
+                    GameEngine.showItems(currentRoom);
+                }
+                else {
+                    GameEngine.lookAction();
+                    currentRoom.visited = true;
+                }
+            }
+
+            else {
+                GameEngine.lookAction();
+                currentRoom.visited = true;
+            }
+        }
+    },
+
+    takeAction: (item) => {
+
+        let lItem = item.toLowerCase();
+        let itemObject = itemObjects[lItem];
+        let currentRoom = GameEngine.getCurrentRoom();
+
+        if ( !currentRoom.items.includes(itemObject) ) {
+            GameEngine.cliOutput("A "+lItem+" does not exist here.");
+        }
+
+        if ( GameEngine.gameState.player.inventory[itemObject] ) {
+            GameEngine.cliOutput("The "+lItem+" is already in your bag.");
+        }
+
+        console.log(itemObject);
+        GameEngine.gameState.player.inventory.push(itemObject);
+        GameEngine.cliOutput("You put the "+lItem+" in your bag.");
+        
+    }
 
 }
 

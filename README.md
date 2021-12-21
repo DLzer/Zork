@@ -22,19 +22,19 @@ Being a non-compile project the layout is kept relatively simple.
 * index.html
 * /assets
     * /css
-        * style.css The stylesheet
+        * `style.css` The stylesheet
     * /js
         * /Domain
             * /CLI
-                * /CLI.js The DOM CLI interface class
+                * `CLI.js` The DOM CLI interface class
             * /GameEngine
-                * GameEngine.js The GameEngine class
+                * `GameEngine.js` The GameEngine class
             * /Item
-                * Item.js The Item library class
+                * `Item.js` The Item library class
             * /Player
-                * Player.js The Player state class
+                * `Player.js` The Player state class
             * /Room
-                * Room.js The Room library class
+                * `Room.js` The Room library class
 
 ### Class Documentation
 

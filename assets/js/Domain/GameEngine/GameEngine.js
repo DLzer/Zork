@@ -8,13 +8,9 @@ GameEngine = {
      * Start the game engine
      */
     init: () => {
-        console.log('**GameEngine: Initializing...')
-        // GameEngine.startCommandListener()
         GameEngine.initializeCLI();
         GameEngine.cli.startCommandListener();
-        console.log('**GameEngine: Determining player state');
         GameEngine.initalizePlayer();
-        console.log('**GameEngine: Last game state:', GameEngine.player);
         GameEngine.lookAction();
     },
 
@@ -31,7 +27,7 @@ GameEngine = {
         GameEngine.player = new Player();
         GameEngine.player = GameEngine.player.loadPlayerState();
 
-        if ( GameEngine.player.gameIsSaved ) { GameEngine.cli.output("<strong>Game loaded from a previous save.</strong>"); }
+        if ( GameEngine.player.gameIsSaved ) { GameEngine.cli.output(GameEngine.outputList.saveLoaded); }
     },
 
     /**
@@ -39,8 +35,7 @@ GameEngine = {
      */
     saveGame: () => {
         GameEngine.player.savePlayerState();
-        GameEngine.cli.output("<strong>Your game state has been saved.</strong>");
-        console.log("**GameEngine: Game state saved");
+        GameEngine.cli.output(GameEngine.outputList.gameSaved);
     },
 
     /**
@@ -48,16 +43,15 @@ GameEngine = {
      */
     resetGame: () => {
         GameEngine.player.resetPlayerState();
-        GameEngine.cli.output("<strong>Your game state has been reset.</strong>");
-        console.log("**GameEngine: Game state reset");
+        GameEngine.cli.output(GameEngine.outputList.gameReset);
     },
 
     /********* CORE COMMANDS *********/
 
     // Outputs a help dialog to the player
     printHelp: () => {
-        GameEngine.cli.output("Here is a list of acceptable commands:");
-        var acceptedCommands = ['> go [direction]', '> north', '> east', '> south', '> west', '> up', '> down', '> look', '> open', '> enter', '> exit','> climb', '> brief [ short descriptions ]', '> verbose [ long descriptions ]', '> help', '> take', '> bag', '> save [ Save current game]', '> reset [ Reset game including save ]'];
+        GameEngine.cli.output(GameEngine.outputList.acceptableCommands);
+        var acceptedCommands = GameEngine.outputList.acceptableCommandList;
         for(i = 0; i < acceptedCommands.length; i++) {
             GameEngine.cli.output(acceptedCommands[i]);
         }
@@ -67,9 +61,9 @@ GameEngine = {
         let inventory = GameEngine.player.getPlayerInventory();
 
         if(inventory === undefined || inventory.length == 0) {
-			GameEngine.cli.output("There is nothing in your bag!");
+			GameEngine.cli.output(GameEngine.outputList.emptyBag);
 		} else {
-			GameEngine.cli.output("Your bag contains:");
+			GameEngine.cli.output(GameEngine.outputList.bagContains);
 			for(j=0;j<inventory.length;j++) {
 				GameEngine.cli.output(GameEngine.player.inventory[j]);
 			}
@@ -78,12 +72,12 @@ GameEngine = {
     // Sets the output of items and rooms to verbose mode
     setVerboseOutput: () => {
         GameEngine.player.setVerboseMode(true);
-        GameEngine.cli.output("ZORK is now in its \"verbose\" mode, which always gives long descriptions of locations (even if you've been there before).");
+        GameEngine.cli.output(GameEngine.outputList.verboseMode);
     },
     // Sets the output of items and rooms to brief mode
     setBriefOutput: () => {
         GameEngine.player.setVerboseMode(false);
-        GameEngine.cli.output("ZORK is now in its normal \"brief\" printing mode, which gives long descriptions of places never before visited, and short descriptions otherwise.");
+        GameEngine.cli.output(GameEngine.outputList.briefMode);
     },
 
     getCurrentRoom: () => {
@@ -161,7 +155,6 @@ GameEngine = {
         let lDirection = direction.toLowerCase();
 
         if ( lDirection == "back" ) {
-            console.log("**GameEngine: Moving "+lDirection);
             GameEngine.player.setCurrentLocation(GameEngine.player.getPreviousLocation());
             GameEngine.player.setPreviousLocation(roomList[currentRoom].varName);
             currentRoom = GameEngine.getCurrentRoom();
@@ -169,11 +162,10 @@ GameEngine = {
 
             if (roomList[currentRoom][lDirection] === undefined) 
             {
-                GameEngine.cli.output("You can't go that way.");
+                GameEngine.cli.output(GameEngine.outputList.invalidDirection);
                 return;
             }
 
-            console.log("**GameEngine: Moving "+lDirection);
             GameEngine.player.setPreviousLocation(roomList[currentRoom].varName);
             GameEngine.player.setCurrentLocation(roomList[currentRoom][lDirection].varName);
             currentRoom = GameEngine.getCurrentRoom();
@@ -207,7 +199,7 @@ GameEngine = {
 
         if (roomList[currentRoom]["open"] === undefined || !roomList[currentRoom]["open"]) 
         {
-            GameEngine.cli.output("You can't open that.");
+            GameEngine.cli.output(GameEngine.outputList.notOpenable);
         }
         else 
         {
@@ -268,7 +260,7 @@ GameEngine = {
 
         if (!itemObject.actionArray.includes("read"))
         {
-            GameEngine.cli.output("This is not a readable item.");
+            GameEngine.cli.output(GameEngine.outputList.notReadable);
             return;
         }
 
@@ -297,7 +289,7 @@ GameEngine = {
     useAction: (item) => {
 
         if ( !item ) {
-            GameEngine.cli.output("Use what?");
+            GameEngine.cli.output(GameEngine.outputList.notUseable);
         }
 
         let lItem = item.toLowerCase();
@@ -307,7 +299,7 @@ GameEngine = {
         }
 
         if (itemObjects[lItem].inUse) {
-            GameEngine.cli.output("The item is already in use. Putting item away.");
+            GameEngine.cli.output(GameEngine.outputList.alreadyInUse);
             itemObjects[lItem].inUse = false;
             GameEngine.lookAction();
         } else {
@@ -324,6 +316,23 @@ GameEngine = {
             GameEngine.lookAction();
         }
 
+    },
+
+    outputList: {
+        saveLoaded: "<strong>Game loaded from a previous save.</strong>",
+        gameSaved: "<strong>Your game state has been saved.</strong>",
+        gameReset: "<strong>Your game state has been reset.</strong>",
+        emptyBag: "There is nothing in your bag!",
+        bagContains: "Your bag contains:",
+        acceptableCommands: "Here is a list of acceptable commands:",
+        acceptableCommandList: ['> go [direction]', '> north', '> east', '> south', '> west', '> up', '> down', '> look', '> open', '> enter', '> exit','> climb', '> brief [ short descriptions ]', '> verbose [ long descriptions ]', '> help', '> take', '> bag', '> save [ Save current game]', '> reset [ Reset game including save ]'],
+        verboseMode: "ZORK is now in its \"verbose\" mode, which always gives long descriptions of locations (even if you've been there before).",
+        briefMode: "ZORK is now in its normal \"brief\" printing mode, which gives long descriptions of places never before visited, and short descriptions otherwise.",
+        invalidDirection: "You can't go that way.",
+        notOpenable: "You can't open that.",
+        notUseable: "Use what?",
+        alreadyInUse: "The item is already in use. Putting item away.",
+        notReadable: "You can't read that."
     },
 
 }

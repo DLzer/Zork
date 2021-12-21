@@ -13,7 +13,7 @@ GameEngine = {
         GameEngine.initializeCLI();
         GameEngine.cli.startCommandListener();
         console.log('**GameEngine: Determining player state');
-        GameEngine.loadSavedGame()
+        GameEngine.initalizePlayer();
         console.log('**GameEngine: Last game state:', GameEngine.player);
         GameEngine.lookAction();
     },
@@ -27,38 +27,19 @@ GameEngine = {
                                  cliContainer);
     },
 
-    /**
-     * Check for a previously saved game
-     */
-    loadSavedGame: () => {
-        if(localStorage.getItem('zorkSaveGameState')) 
-        {
-            savedGame = JSON.parse(localStorage.getItem('zorkSaveGameState'));
-            GameEngine.player = new Player(
-                savedGame.inventory,
-                savedGame.moves,
-                savedGame.score,
-                savedGame.currentRoom,
-                savedGame.previousRoom,
-                savedGame.gameIsSaved,
-                savedGame.verbose
-            )
-        } 
-        else 
-        {
-            GameEngine.player = new Player(
-                [], 0, 0, "westOfHouse", null, false, false
-            );
-        }
+    initalizePlayer: () => {
+        GameEngine.player = new Player();
+        GameEngine.player = GameEngine.player.loadPlayerState();
+
+        if ( GameEngine.player.gameIsSaved ) { GameEngine.cli.output("<strong>Game loaded from a previous save.</strong>"); }
     },
 
     /**
      * Save a current gameState object
      */
     saveGame: () => {
-        GameEngine.player.gameIsSaved = true;
-        localStorage.setItem('zorkSaveGameState', JSON.stringify(GameEngine.player));
-        GameEngine.cli.output("Your game state has been saved.");
+        GameEngine.player.savePlayerState();
+        GameEngine.cli.output("<strong>Your game state has been saved.</strong>");
         console.log("**GameEngine: Game state saved");
     },
 
@@ -66,11 +47,8 @@ GameEngine = {
      * Reset a gameState object
      */
     resetGame: () => {
-        GameEngine.player = new Player(
-            [], 0, 0, "westOfHouse", null, false, false
-        );
-        localStorage.removeItem('zorkSaveGameState');
-        GameEngine.cli.output("Your game state has been reset.");
+        GameEngine.player.resetPlayerState();
+        GameEngine.cli.output("<strong>Your game state has been reset.</strong>");
         console.log("**GameEngine: Game state reset");
     },
 

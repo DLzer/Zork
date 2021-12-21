@@ -37,7 +37,7 @@ Being a non-compile project the layout is kept relatively simple.
                     *Room.js The Room library class
 
 - CLI
-    The CLI is a command interface class for interacting with the DOM. The responsibility is to accept commands from the user, validate them, parse them and pass them back for execution. Additionally the CLI is responsbile for receiving output instructions to print to the DOM CLI.
+    -- The CLI is a command interface class for interacting with the DOM. The responsibility is to accept commands from the user, validate them, parse them and pass them back for execution. Additionally the CLI is responsbile for receiving output instructions to print to the DOM CLI.
 
 - Player
     The Player class is responsible for managing the players state. When saved the players current class state is stored as a JSON string in local storage. When the app reloads, it checks for the saved game and hydrates the player model if it exists.

@@ -20,21 +20,21 @@ I am by no means a Javascript developer, nor do I use Javascript on a daily basi
 Being a non-compile project the layout is kept relatively simple.
 
 * index.html
-    */assets
-        * /css
-            * style.css The stylesheet
-        * /js
-            */Domain
-                */CLI
-                    *CLI.js The DOM CLI interface class
-                */GameEngine
-                    *GameEngine.js The GameEngine class
-                */Item
-                    *Item.js The Item library class
-                */Player
-                    *Player.js The Player state class
-                */Room
-                    *Room.js The Room library class
+* /assets
+    * /css
+        * style.css The stylesheet
+    * /js
+        * /Domain
+            * /CLI
+                * /CLI.js The DOM CLI interface class
+            * /GameEngine
+                * GameEngine.js The GameEngine class
+            * /Item
+                * Item.js The Item library class
+            * /Player
+                * Player.js The Player state class
+            * /Room
+                * Room.js The Room library class
 
 ### Class Documentation
 

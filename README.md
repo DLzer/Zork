@@ -15,7 +15,7 @@ Alternatively, if you'd like to host your own version of Zork, you can! Get the 
 
 I am by no means a Javascript developer, nor do I use Javascript on a daily basis. This project is primarily aimed at practicing Javascript, and for fun.
 
-## :mag_right: Layout and Documentation
+## :mag_right: Layout
 
 Being a non-compile project the layout is kept relatively simple.
 
@@ -36,20 +36,22 @@ Being a non-compile project the layout is kept relatively simple.
                 */Room
                     *Room.js The Room library class
 
-- CLI
+### Class Documentation
+
+- **CLI**
     -- The CLI is a command interface class for interacting with the DOM. The responsibility is to accept commands from the user, validate them, parse them and pass them back for execution. Additionally the CLI is responsbile for receiving output instructions to print to the DOM CLI.
 
-- Player
-    The Player class is responsible for managing the players state. When saved the players current class state is stored as a JSON string in local storage. When the app reloads, it checks for the saved game and hydrates the player model if it exists.
+- **Player**
+    -- The Player class is responsible for managing the players state. When saved the players current class state is stored as a JSON string in local storage. When the app reloads, it checks for the saved game and hydrates the player model if it exists.
 
-- Item
-    The Item class is meant as a factory for creating items. Additionally the `Item.js` file holds a static list of referencable item objects.
+- **Item**
+    -- The Item class is meant as a factory for creating items. Additionally the `Item.js` file holds a static list of referencable item objects.
 
-- Room
-    The Room class is meant as a factory for creating rooms and their exits using cardinal directions. Additionally the `Room.js` file holds a static list of referencable room objects.
+- **Room**
+    -- The Room class is meant as a factory for creating rooms and their exits using cardinal directions. Additionally the `Room.js` file holds a static list of referencable room objects.
 
-- GameEngine
-    The `GameEngine.js` file holds a single `GameEngine` object which is responsible for tying all other components together. A future goal is to abstract as much functionality to each domain as possible to keep the scope of the GameEngine strictly for interlacing other classes.
+- **GameEngine**
+    -- The `GameEngine.js` file holds a single `GameEngine` object which is responsible for tying all other components together. A future goal is to abstract as much functionality to each domain as possible to keep the scope of the GameEngine strictly for interlacing other classes.
 
 
 ## :wrench: Contributing

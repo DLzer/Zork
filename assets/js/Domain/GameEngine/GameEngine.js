@@ -3,19 +3,6 @@ GameEngine = {
     roomView:       $('.room'),
     scoreBoard:     $('#score-int'),
     movesBoard:     $('#move-int'),
-    allowedVerbs: [
-        "GO", "LOOK", "TAKE", "PUSH", "BACK",
-        "PULL", "DROP", "OPEN", "WAIT", "ENTER",
-        "CLOSE", "INVENTORY", "BAG", "ZYZZY", "HELP",
-        "USE", "NORTH", "EAST", "SOUTH", "WEST", "MAILBOX",
-        "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET",
-        "HELP", "STATE", "BRIEF", "VERBOSE", "READ",
-        "CLIMB", "UP", "DOWN",
-    ],
-    openableInstances: [
-        "WINDOW", "DOOR", "TRAPDOOR", "TRAP", "TREE", "KITCHEN",
-        "CHIMNEY",
-    ],
 
     /**
      * Start the game engine

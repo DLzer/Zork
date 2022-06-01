@@ -94,7 +94,7 @@ class Player
 
     addMove()
     {
-        this.moves = this.moves++;
+        this.moves = this.moves+1;
     }
 
     addScore(score)

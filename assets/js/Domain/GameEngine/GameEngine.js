@@ -26,6 +26,7 @@ GameEngine = {
     initalizePlayer: () => {
         GameEngine.player = new Player();
         GameEngine.player = GameEngine.player.loadPlayerState();
+        GameEngine.movesBoard.text(GameEngine.player.moves)
 
         if ( GameEngine.player.gameIsSaved ) { GameEngine.cli.output(GameEngine.outputList.saveLoaded); }
     },
@@ -44,6 +45,14 @@ GameEngine = {
     resetGame: () => {
         GameEngine.player.resetPlayerState();
         GameEngine.cli.output(GameEngine.outputList.gameReset);
+        GameEngine.movesBoard.text(0)
+    },
+
+    /********* BOARD COMMANDS *********/
+
+    increaseMoves: () => {
+        GameEngine.movesBoard.text(parseInt(GameEngine.movesBoard.text())+1);
+        GameEngine.player.addMove();
     },
 
     /********* CORE COMMANDS *********/
@@ -151,6 +160,8 @@ GameEngine = {
 
     goAction: (direction) => {
 
+        GameEngine.increaseMoves()
+
         let currentRoom = GameEngine.getCurrentRoom();
         let lDirection = direction.toLowerCase();
 
@@ -159,8 +170,7 @@ GameEngine = {
             GameEngine.player.setPreviousLocation(roomList[currentRoom].varName);
             currentRoom = GameEngine.getCurrentRoom();
         } else {
-            console.log("Room", roomList[currentRoom]);
-            console.log("Direction", lDirection);
+
             if (roomList[currentRoom][lDirection] === undefined) 
             {
                 GameEngine.cli.output(GameEngine.outputList.invalidDirection);
@@ -205,7 +215,7 @@ GameEngine = {
         else 
         {
 
-        console.log("**GameEngine: Opening room");
+        // console.log("**GameEngine: Opening room");
         GameEngine.player.setPreviousLocation(roomList[currentRoom].varName);
         GameEngine.player.setCurrentLocation(roomList[currentRoom]["open"].varName);
         currentRoom = GameEngine.getCurrentRoom();

@@ -3,6 +3,7 @@ GameEngine = {
     roomView:       $('.room'),
     scoreBoard:     $('#score-int'),
     movesBoard:     $('#move-int'),
+    crtToggle:      $('#crt-toggle'),
 
     /**
      * Start the game engine
@@ -12,6 +13,11 @@ GameEngine = {
         GameEngine.cli.startCommandListener();
         GameEngine.initalizePlayer();
         GameEngine.lookAction();
+        GameEngine.crtToggle.on('click', function() {
+            $('#crt-screen').toggleClass('crt');
+            $('#led').toggleClass('red');
+            $('#crt-text').toggleClass('crt-text-off');
+        });
     },
 
     initializeCLI: () => {

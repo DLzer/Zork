@@ -20,7 +20,7 @@ class CLI
             "USE", "NORTH", "EAST", "SOUTH", "WEST", "MAILBOX",
             "UP", "DOWN", "LEFT", "RIGHT", "SAVE", "RESET",
             "HELP", "STATE", "BRIEF", "VERBOSE", "READ",
-            "CLIMB", "UP", "DOWN",
+            "CLIMB", "UP", "DOWN", "MOVE", "RUG"
         ];
         this.openableInstances = [
             "WINDOW", "DOOR", "TRAPDOOR", "TRAP", "TREE", "KITCHEN",
@@ -137,6 +137,7 @@ class CLI
             "UP":         GameEngine.goAction,
             "DOWN":       GameEngine.goAction,
             "ENTER":      GameEngine.goAction,
+            "MOVE":       GameEngine.goAction,
             "LOOK":       GameEngine.lookAction,
             "TAKE":       GameEngine.takeAction,
             "USE":        GameEngine.useAction,
@@ -156,7 +157,7 @@ class CLI
             "VERBOSE":    GameEngine.setVerboseOutput,
         }
     
-        if ( ["NORTH", "SOUTH", "EAST", "WEST", "BACK", "CLIMB", "ENTER", "UP", "DOWN"].includes(cmd) ) {
+        if ( ["NORTH", "SOUTH", "EAST", "WEST", "BACK", "CLIMB", "ENTER", "UP", "DOWN", "MOVE"].includes(cmd) ) {
             verbMap[ cmd ]( cmd );
         } else {
             verbMap[ cmd ]( arg );

@@ -159,7 +159,8 @@ GameEngine = {
             GameEngine.player.setPreviousLocation(roomList[currentRoom].varName);
             currentRoom = GameEngine.getCurrentRoom();
         } else {
-
+            console.log("Room", roomList[currentRoom]);
+            console.log("Direction", lDirection);
             if (roomList[currentRoom][lDirection] === undefined) 
             {
                 GameEngine.cli.output(GameEngine.outputList.invalidDirection);

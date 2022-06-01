@@ -87,6 +87,9 @@
             case "move":
                 this.move = exit;
                 break;
+            case "rug":
+                this.move = exit;
+                break;
         }
 
     }
@@ -207,7 +210,7 @@ roomList.kitchen.addExit("west", roomList.livingRoom);
 roomList.chimney.addExit("down", roomList.kitchen);
 // Living Room
 roomList.livingRoom.addExit("east", roomList.kitchen);
-roomList.livingRoom.addExit("move", roomList.livingRoomRugMoved);
+roomList.livingRoom.addExit("rug", roomList.livingRoomRugMoved);
 // Living Room rug moved
 roomList.livingRoomRugMoved.addExit("east", roomList.kitchen);
 roomList.livingRoomRugMoved.addExit("open", roomList.livingRoomTrapDoor);

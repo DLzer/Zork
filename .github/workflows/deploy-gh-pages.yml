@@ -1,0 +1,86 @@
+name: Deploy GitHub Pages
+
+on:
+ push 
+
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Check files in docs folded
+    outputs:
+      run_job: ${{ steps.check_files.outputs.run_job }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - name: check modified files
+        id: check_files
+        run: |
+          echo "=============== list modified files ==============="
+          git diff --name-only HEAD^ HEAD
+
+          echo "========== check paths of modified files =========="
+          git diff --name-only HEAD^ HEAD > files.txt
+          while IFS= read -r file
+          do
+            echo $file
+            if [[ $file != docs/* ]]; then
+              echo "This modified file is not under the 'docs' folder." 
+              echo "run_job=false" >> $GITHUB_OUTPUT
+              break
+            else 
+              echo "run_job=true" >> $GITHUB_OUTPUT
+            fi
+          done < files.txt
+
+  build-html-site:
+    name: Build-jekyll if files in docs changed
+    needs: check
+    if: needs.check.outputs.run_job == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+          cd ./docs
+          echo "===== Docs ====="
+          ls
+          cd ..
+          cd ./_posts
+          echo "===== posts ====="
+          ls
+          cd ..
+          cat _config.yml
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v1
+ 
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: "_site${{ steps.pages.outputs.base_path }}"
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-html-site
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

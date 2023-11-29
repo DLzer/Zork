@@ -8,10 +8,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
+    - name: Create dist folder
+      run: | 
+        mkdir -p ../dist 
+        # copy all files except .git folder to the dist folder
+        cp -r !(.git) ../dist 
     - name: Init new repo in dist folder and commit generated files
-      run: |
-        ls
+      run: | 
+        cd ../dist
         git init
         git add -A
         git config --local user.email "action@github.com"
@@ -24,4 +28,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: gh-pages
         force: true
-        directory: ./zork
+        directory: ./docs/.vuepress/dist

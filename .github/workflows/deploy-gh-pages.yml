@@ -1,47 +1,28 @@
-name: Deploy GitHub Pages
-
+name: Deploy to GitHub pages
 on:
- push 
-
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
+  push:
+    branches: [ main, try-deploy-gh-pages ]
 jobs:
- 
-  build-html-site:
-    name: Build HTML site 
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 
- 
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v1
+    - uses: actions/checkout@v2
  
 
-      - name: Upload site artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: "_site${{ steps.pages.outputs.base_path }}"
+    - name: Init new repo in dist folder and commit generated files
+      run: |
+        cd zork
+        git init
+        git add -A
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -m 'deploy'
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build-html-site
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+    - name: Force push to destination branch
+      uses: ad-m/github-push-action@v0.5.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        force: true
+        directory: ./zork

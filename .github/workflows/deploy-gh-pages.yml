@@ -8,11 +8,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
- 
 
     - name: Init new repo in dist folder and commit generated files
       run: |
-        cd zork
+        ls
         git init
         git add -A
         git config --local user.email "action@github.com"

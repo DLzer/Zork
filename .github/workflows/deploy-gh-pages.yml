@@ -12,7 +12,7 @@ jobs:
       run: | 
         mkdir -p ../dist 
         # copy all files except .git folder to the dist folder
-        cp -r !(.git) ../dist 
+        rsync -a --exclude=.git ./ ../dist/ 
     - name: Init new repo in dist folder and commit generated files
       run: | 
         cd ../dist

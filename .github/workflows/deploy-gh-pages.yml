@@ -10,12 +10,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Create dist folder
       run: | 
-        mkdir -p ../dist 
+        mkdir -p ./dist 
         # copy all files except .git folder to the dist folder
-        rsync -a --exclude=.git ./ ../dist/ 
+        rsync -a --exclude=.git ./ ./dist/ 
     - name: Init new repo in dist folder and commit generated files
       run: | 
-        cd ../dist
+        cd ./dist
         git init
         git add -A
         git config --local user.email "action@github.com"
